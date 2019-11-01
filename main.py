@@ -1,38 +1,64 @@
-#grafo
+'''
+    Tarefa sobre Grafos
+    Augusto
+    Murilo
+'''
 
-class Graph(): # classe para o grafo e seus métodos
 
-    def new(value):
+class Graph():  # classe para o grafo e seus métodos
+
+    # método que cria um novo nodo
+    # recebe por parâmetro o valor do nodo(sua chave/identicação)
+    def new(self, value):
         self.node = Node(value)
 
-    def push():
+    # método para inserir um novo nodo a um grafo já existente
+    # recebe sua identificação e a quais nodos se liga (seus vértices)
+    def push(self, value, vertex):
+        pass
 
-    def pop():
+    def pop(self):
+        pass
 
-    def insert():
+    def insert(self):
+        pass
 
-    def remove():
+    def remove(self):
+        pass
 
-    def view():
+    def view(self):
+        pass
 
-    def identify():
+    def identify(self):
+        pass
 
-    def grade():
+    def grade(self):
+        pass
 
 
-class Node(value): # classe para cada nodo
+class Node():  # classe para cada nodo
 
-    def __init__(self): 
+    def __init__(self, value):
         self.value = value
         self.next = False
 
 
-def readFile(): # função para receber entrada
-    return
+def readFile():  # função para receber entrada - sugestão: mover para main
+    with open('entrada.txt') as arquivo:
+        linhas = [linha.rstrip() for linha in arquivo]  # remove tudo a direita - \n
+
+    return linhas
+
 
 def main():
-    g = Graph()
-    g.new()
+
+    entrada = readFile()
+    print(f'Entrada = {entrada}')
+
+    g = []
+    g.append(Graph())
+
+    print(g)
 
 
 main()
