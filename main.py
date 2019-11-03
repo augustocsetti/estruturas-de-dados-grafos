@@ -10,18 +10,23 @@ class Graph():  # classe para o grafo e seus métodos
         self.nodes = nodes
         self.edges = edges                       
  
-    # método para inserir um novo nodo a um grafo já existente
-    # recebe sua identificação e a quais nodos se liga (seus vértices)
-    def push(self, value, vertex):
-        pass
+    # método para inserir um novo nodo a um grafo já existente   
+    def push(self, node):
+        self.nodes.append(node)
 
-    def pop(self):
-        pass
+    # método que remove um nodo
+    def pop(self, node):
+        for i in range(len(self.nodes)):        
+            if node == self.nodes[i]:                            
+                self.nodes.pop(i)
+                break
+    
+    # método para inserir arestras entre dois nodos já existentes
+    def insert(self, edge):        
+        self.edges.append([edge[0], edge[1]])
 
-    def insert(self):
-        pass
-
-    def remove(self):
+    # método para remover arestas
+    def remove(self, edge):
         pass
     
     # mostra lista com os nodos e suas arestas
@@ -58,8 +63,8 @@ class Graph():  # classe para o grafo e seus métodos
             print(f'{self.nodes[i]} ', end='')
                         
             for j in range(len(self.nodes)):
-                # a comparação abaixo é feita com or para garantir que
-                #  tanto (1, 5) quanto (5, 1) sejam registdas correntamente
+                # a comparação abaixo é feita com 'or' para garantir que
+                #  tanto (1, 5) quanto (5, 1) sejam registradas correntamente
                 if list([self.nodes[i], self.nodes[j]]) in self.edges or list([self.nodes[j], self.nodes[i]]) in self.edges:
                     print('1 ', end='')
                 else:
@@ -99,6 +104,18 @@ def main():
     g.view()
     for node in nodes:
         g.grade(node)
+    g.adjacencyMatrix()
+    g.push('6')
+    g.adjacencyMatrix()
+    g.insert('62')
+    g.insert('66')
+    g.view()
+    g.adjacencyMatrix()
+    g.pop('3')
+    g.view()
+    g.adjacencyMatrix()
+    g.pop('1')
+    g.view()
     g.adjacencyMatrix()
 
 main()
