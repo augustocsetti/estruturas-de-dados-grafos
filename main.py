@@ -17,32 +17,45 @@ class Graph():  # classe para o grafo e seus métodos
         self.nodes.append(node)
 
     # método que remove um nodo
+    # começa verificando se existem nodos no grafo
+    # caso sim, verifica se o nodo informado pertence ou não ao grafo
     def pop(self, node):
-        self.aux = []
-        self.index = -1
+        if len(self.nodes) == 0:
+            print('\nERRO! Não existem nodos a ser exluídos.\n')
+        elif node not in self.nodes:
+            print('\nERRO! O nodo informado não existe.\n')
+        else:
+            self.aux = []
+            self.index = -1
 
-        # procura o índice no nodo a ser excluído
-        for i in range(len(self.nodes)):
-            if node == self.nodes[i]:
-                self.index = i
-                break
+            # procura o índice no nodo a ser excluído
+            for i in range(len(self.nodes)):
+                if node == self.nodes[i]:
+                    self.index = i
+                    break
 
-        if self.index >= 0:
-            # não confundir com o método pop implementado - abaixo é o de listas
-            self.nodes.pop(self.index)
+            if self.index >= 0:
+                # não confundir com o método pop implementado - abaixo é o de listas
+                self.nodes.pop(self.index)
 
-            # procura por arestas que contenham o nodo excluído
-            for i in range(len(self.edges)):
-                if node in ''.join(self.edges[i]):
-                    self.aux.append(''.join(self.edges[i]))
+                # procura por arestas que contenham o nodo excluído
+                for i in range(len(self.edges)):
+                    if node in ''.join(self.edges[i]):
+                        self.aux.append(''.join(self.edges[i]))
 
-            # chama o método para remover arestas
-            for i in range(len(self.aux)):
-                self.remove(self.aux[i])
+                # chama o método para remover arestas
+                for i in range(len(self.aux)):
+                    self.remove(self.aux[i])
 
     # método para inserir arestras entre dois nodos já existentes
+    # começa verificando se existem nodos no grafo
     def insert(self, edge):
-        self.edges.append([edge[0], edge[1]])
+        if len(self.nodes) == 0:
+            print('\nERRO! Não existem nodos neste grafo.\n')
+        elif edge[0] not in self.nodes or edge[1] not in self.nodes:
+            print('\nERRO! Um dos nodos não existe.\n')
+        else:
+            self.edges.append([edge[0], edge[1]])
 
     # método para remover arestas
     def remove(self, edge):
@@ -101,8 +114,16 @@ class Graph():  # classe para o grafo e seus métodos
                     print('0 ', end='')
             print()
 
+    # método para mudar a definição do grafo
+    # não-orientado -> orientado
+    # orientado -> não-orientado
+    # NOME do método pode ser melhorado
+    def direction(self):
+        self.directed = not self.directed
 
 # função para receber entrada
+
+
 def readFile():
     with open('entrada.txt') as file:
         lines = [line.rstrip() for line in file]
@@ -110,6 +131,8 @@ def readFile():
     return lines
 
 # menu do programa
+
+
 def menu():
     print('===============Opções===============')
     print('1 - Mostrar lista de adjacências')
@@ -118,9 +141,12 @@ def menu():
     print('4 - Remover um nodo')
     print('5 - Inserir uma aresta')
     print('6 - Remover uma aresta')
-    print('7 - Criar um novo grafo')
+    print('7 - Não-orientado -> orientado (e vice-versa)')
+    print('0 = Encerra o programa')
     print('====================================')
     option = input('Opção: ')
+
+    return option
 
 
 def main():
@@ -139,34 +165,32 @@ def main():
         edges.append([linha[0], linha[1]])
 
     # cria o objeto passando como parâmetro os nodos e arestas
-    grafos = []
-    grafos.append(Graph(nodes, edges))
+    g = Graph(nodes, edges)
 
     # testes
-    grafos[0].view()
-    for node in nodes:
-        grafos[0].grade(node)
-    # grafos[0].adjacencyMatrix()
-    grafos[0].push('6')
-    grafos[0].adjacencyMatrix()
-    grafos[0].insert('62')
-    grafos[0].insert('66')
-    # grafos[0].view()
-    # grafos[0].adjacencyMatrix()
-    grafos[0].pop('2')
-    grafos[0].view()
-    # grafos[0].adjacencyMatrix()
-    # grafos[0].pop('1')
-    # grafos[0].view()
-    grafos[0].adjacencyMatrix()
-    grafos[0].remove('15')
-    grafos[0].view()
-    print('------')
-    grafos.append(Graph('', '', True))
-    grafos[1].view()
-    grafos[1].adjacencyMatrix()
-    print(grafos[1].directed)
-    menu()
+    op = -1
+
+    while op != 0:
+        try:
+            op = int(menu())
+        except ValueError:
+            print('\nFavor informar um valor válido.\n')
+        if op == 1:
+            g.view()
+        elif op == 2:
+            g.adjacencyMatrix()
+        elif op == 3:
+            g.push(input('Informe o novo nodo: '))
+        elif op == 4:
+            g.pop(input('Informe o nodo a ser excluído: '))
+        elif op == 5:
+            g.insert(input('Informe a aresta a ser incluída: '))
+        elif op == 6:
+            g.remove(input('Informe a aresta a ser excluída: '))
+        elif op == 7:
+            g.direction()
+        elif op < 0 or op > 7:
+            print('\nFavor informar um valor válido.\n')
 
 
 main()
