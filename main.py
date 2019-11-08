@@ -15,6 +15,7 @@ class Graph():  # classe para o grafo e seus métodos
     # método para inserir um novo nodo a um grafo já existente
     def push(self, node):
         self.nodes.append(node)
+        print('\nOperação bem sucedida.\n')
 
     # método que remove um nodo
     # começa verificando se existem nodos no grafo
@@ -47,36 +48,58 @@ class Graph():  # classe para o grafo e seus métodos
                 for i in range(len(self.aux)):
                     self.remove(self.aux[i])
 
+            print('\nOperação bem sucedida.\n')
+
     # método para inserir arestras entre dois nodos já existentes
     # começa verificando se existem nodos no grafo
+    # a seguir verifica se o tamanho da entrada é igual a 2
+    # depois checa se a ligação é feita entre nodos que existem
+    # e finaliza verificando se é uma aresta nova ou se já existia
     def insert(self, edge):
         if len(self.nodes) == 0:
             print('\nERRO! Não existem nodos neste grafo.\n')
         elif edge[0] not in self.nodes or edge[1] not in self.nodes:
             print('\nERRO! Um dos nodos não existe.\n')
+        elif edge in self.edges:
+            print('\nERRO! Aresta já existe.\n')
         else:
             self.edges.append([edge[0], edge[1]])
+            print('\nOperação bem sucedida.\n')
 
     # método para remover arestas
+    # verifica se existem arestas no grafo
+    # logo após verifica se a aresta informada existe no grafo
     def remove(self, edge):
-        # esta variável guarda as arestas que não serão excluídas
-        # ela foi criada para evitar problemas de índice
-        # eles ocorriam quanto o pop era usado no meio do loop
-        self.temp = []
-
-        for i in range(len(self.edges)):
-            if [edge[0], edge[1]] != self.edges[i]:
-                self.temp.append(self.edges[i])
-
-        self.edges = self.temp
+        if len(self.edges) == 0:
+            print('\nERRO! Não existem arestas a ser exluídas.\n')
+        elif [edge[0], edge[1]] not in self.edges:
+            print('\nERRO! A aresta informada não existe.\n')
+        else:
+            self.edges.remove([edge[0], edge[1]])
+            print('\nOperação bem sucedida.\n')
 
     # mostra lista com os nodos e suas arestas
     def view(self):
         for i in range(len(self.nodes)):
             print(f'{self.nodes[i]}: ', end='')
+
             for j in range(len(self.edges)):
-                if self.nodes[i] in self.edges[j]:
-                    print(f'{self.edges[j]} ', end='')
+                # grafo direcionado: verificamos o primeiro elemento da aresta
+                # ex.: nodo '1', aresta '12' => somente o '1' de um '12' é levado em conta
+                if self.directed:
+                    if self.nodes[i] == self.edges[j][0]:
+                        print(f'{self.edges[j]} ', end='')
+
+                # grafo não direcionado: o importante é evitar que arestas 'iguais' se repitam
+                # ex.: ['4', '5'] é igual a ['5', '4'] é igual neste tipo de grafo
+                # para isso foi utilizada a função reverse() do tipo list
+                else:
+                    # necessário utilizr .copy() porque o python faz a atribuição por referência
+                    # isto modificava o elemento original, algo indesejável
+                    self.temp = self.edges[j].copy()
+                    self.temp.reverse()
+                    if self.nodes[i] in self.edges[j] and self.temp not in self.edges[:j]:
+                        print(f'{self.edges[j]} ', end='')
             print()
 
     def identify(self):
@@ -84,13 +107,16 @@ class Graph():  # classe para o grafo e seus métodos
 
     # mostra o grau do nodo
     def grade(self, node):
-        self.count = 0
+        if node not in self.nodes:
+            print('\nERRO! O nodo não existe.\n')
+        else:
+            self.count = 0
 
-        for edge in self.edges:
-            if str(node) in list(edge):
-                self.count += 1
+            for edge in self.edges:
+                if str(node) in list(edge):
+                    self.count += 1
 
-        print(f'Grau do nodo {node} = {self.count}')
+            print(f'\nGrau do nodo {node} = {self.count}\n')
 
     # mostra a matriz de adjacência do grafo
     def adjacencyMatrix(self):
@@ -101,7 +127,7 @@ class Graph():  # classe para o grafo e seus métodos
 
         print()
 
-        # procura pelas nodos que possuem arestas entre si
+        # procura pelos nodos que possuem arestas entre si
         for i in range(len(self.nodes)):
             print(f'{self.nodes[i]} ', end='')
 
@@ -115,15 +141,13 @@ class Graph():  # classe para o grafo e seus métodos
             print()
 
     # método para mudar a definição do grafo
-    # não-orientado -> orientado
-    # orientado -> não-orientado
+    # não-orientado -> orientado e orientado -> não-orientado
     # NOME do método pode ser melhorado
     def direction(self):
         self.directed = not self.directed
+        print('\nOperação bem sucedida.\n')
 
-# função para receber entrada
-
-
+# função para receber entrada do arquivo
 def readFile():
     with open('entrada.txt') as file:
         lines = [line.rstrip() for line in file]
@@ -131,8 +155,6 @@ def readFile():
     return lines
 
 # menu do programa
-
-
 def menu():
     print('===============Opções===============')
     print('1 - Mostrar lista de adjacências')
@@ -141,7 +163,8 @@ def menu():
     print('4 - Remover um nodo')
     print('5 - Inserir uma aresta')
     print('6 - Remover uma aresta')
-    print('7 - Não-orientado -> orientado (e vice-versa)')
+    print('7 - Informar o grau de um nodo')
+    print('8 - Não-orientado -> orientado (e vice-versa)')
     print('0 = Encerra o programa')
     print('====================================')
     option = input('Opção: ')
@@ -188,9 +211,11 @@ def main():
         elif op == 6:
             g.remove(input('Informe a aresta a ser excluída: '))
         elif op == 7:
+            g.grade(input('Informe o nodo: '))
+        elif op == 8:
             g.direction()
-        elif op < 0 or op > 7:
-            print('\nFavor informar um valor válido.\n')
+        elif op < 0 or op > 8:
+            print('\nERRO! Favor informar um valor entre 0 e 7.\n')
 
 
 main()
