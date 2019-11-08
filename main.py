@@ -22,7 +22,7 @@ class Graph():  # classe para o grafo e seus métodos
     # caso sim, verifica se o nodo informado pertence ou não ao grafo
     def pop(self, node):
         if len(self.nodes) == 0:
-            print('\nERRO! Não existem nodos a ser exluídos.\n')
+            print('\nERRO! Não existem nodos a excluir.\n')
         elif node not in self.nodes:
             print('\nERRO! O nodo informado não existe.\n')
         else:
@@ -68,7 +68,6 @@ class Graph():  # classe para o grafo e seus métodos
             self.edges.append([edge[0], edge[1]])
             print('\nOperação bem sucedida.\n')
 
-        print(self.edges)
 
     # método para remover arestas
     # verifica se existem arestas no grafo
@@ -95,7 +94,7 @@ class Graph():  # classe para o grafo e seus métodos
                         print(f'{self.edges[j]} ', end='')
 
                 # grafo não direcionado: o importante é evitar que arestas 'iguais' se repitam
-                # ex.: ['4', '5'] é igual a ['5', '4'] é igual neste tipo de grafo
+                # ex.: ['4', '5'] é igual a ['5', '4'] neste tipo de grafo
                 # para isso foi utilizada a função reverse() do tipo list
                 else:
                     # necessário utilizr .copy() porque o python faz a atribuição por referência
@@ -114,13 +113,22 @@ class Graph():  # classe para o grafo e seus métodos
         if node not in self.nodes:
             print('\nERRO! O nodo não existe.\n')
         else:
-            self.count = 0
+            self.entry = 0
+            self.exit = 0
 
             for edge in self.edges:
-                if str(node) in list(edge):
-                    self.count += 1
+                if self.directed:
+                    if node == edge[0]:
+                        self.exit += 1
+                    if node == edge[1]:
+                        self.entry += 1
+                else:
+                    if node in edge:
+                        self.entry += 1
+                        self.exit += 1
 
-            print(f'\nGrau do nodo {node} = {self.count}\n')
+            print(f'\nGrau de entrada do nodo {node}: {self.entry}')
+            print(f'Grau de saída do nodo {node}: {self.exit}\n')
 
     # mostra a matriz de adjacência do grafo
     def adjacencyMatrix(self):
