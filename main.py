@@ -62,11 +62,13 @@ class Graph():  # classe para o grafo e seus métodos
             print('\nERRO! Favor informar dois dígitos.\n')
         elif edge[0] not in self.nodes or edge[1] not in self.nodes:
             print('\nERRO! Um dos nodos não existe.\n')
-        elif edge in self.edges:
+        elif [edge[0], edge[1]] in self.edges:
             print('\nERRO! Aresta já existe.\n')
         else:
             self.edges.append([edge[0], edge[1]])
             print('\nOperação bem sucedida.\n')
+
+        print(self.edges)
 
     # método para remover arestas
     # verifica se existem arestas no grafo
@@ -134,12 +136,18 @@ class Graph():  # classe para o grafo e seus métodos
             print(f'{self.nodes[i]} ', end='')
 
             for j in range(len(self.nodes)):
+                if self.directed:
+                    if [self.nodes[i], self.nodes[j]] in self.edges:
+                        print('1 ', end='')
+                    else:
+                        print('0 ', end='')
                 # a comparação abaixo é feita com 'or' para garantir que
                 #  tanto (1, 5) quanto (5, 1) sejam registradas corretamente (não direcionado)
-                if [self.nodes[i], self.nodes[j]] in self.edges or [self.nodes[j], self.nodes[i]] in self.edges:
-                    print('1 ', end='')
                 else:
-                    print('0 ', end='')
+                    if [self.nodes[i], self.nodes[j]] in self.edges or [self.nodes[j], self.nodes[i]] in self.edges:
+                        print('1 ', end='')
+                    else:
+                        print('0 ', end='')
             print()
 
     # método para mudar a definição do grafo
