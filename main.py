@@ -58,6 +58,8 @@ class Graph():  # classe para o grafo e seus métodos
     def insert(self, edge):
         if len(self.nodes) == 0:
             print('\nERRO! Não existem nodos neste grafo.\n')
+        elif len(edge) != 2:
+            print('\nERRO! Favor informar dois dígitos.\n')
         elif edge[0] not in self.nodes or edge[1] not in self.nodes:
             print('\nERRO! Um dos nodos não existe.\n')
         elif edge in self.edges:
