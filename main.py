@@ -163,7 +163,9 @@ def main():
     edges = []
     for linha in data[1:]:
         edges.append([linha[0], linha[1]])
-
+    print("AQUI")
+    print(data)
+    print(edges)
     # cria o objeto passando como parâmetro os nodos e arestas
     g = Graph(nodes, edges)
 
