@@ -4,6 +4,9 @@
     Murilo
 '''
 
+# bibliotecas utilizdas para redirecionar o output (print) do método grade
+import io
+from contextlib import redirect_stdout
 
 class Graph():  # classe para o grafo e seus métodos
 
@@ -14,8 +17,11 @@ class Graph():  # classe para o grafo e seus métodos
 
     # método para inserir um novo nodo a um grafo já existente
     def push(self, node):
-        self.nodes.append(node)
-        print('\nOperação bem sucedida.\n')
+        if node not in self.nodes:            
+            self.nodes.append(node)
+            print('\nOperação bem sucedida.\n')
+        else:
+            print('\nERRO! Este nodo já existe.\n')
 
     # método que remove um nodo
     # começa verificando se existem nodos no grafo
@@ -105,8 +111,49 @@ class Graph():  # classe para o grafo e seus métodos
                         print(f'{self.edges[j]} ', end='')
             print()
 
+
+    # este método identifica as fontes e sumidouros de um grafo
+    # nodos fonte são aqueles nos quais não temos arestas de entrada
+    # já os nodos sumidouros são aqueles em que não existe aresta de saída
+    # utilizamos o método grade da classe para identificar estes nodos
+    # eles são então armazenados em duas listas diferentes
     def identify(self):
-        pass
+        self.source = []
+        self.sink = []
+
+        # como a função grade tem um output desnessário neste caso
+        # redirecionamos para uma variável, neste caso 'f'
+        f = io.StringIO()
+        with redirect_stdout(f):
+
+            for node in self.nodes:
+                self.grade(node)
+
+                if self.entry == 0:
+                    self.source.append(node)
+                if self.exit == 0:
+                    self.sink.append(node)
+
+        print()
+
+        if len(self.source) == 0:
+            print('Não existem nodos fonte no grafo.')
+        else:
+            print('Nodo(s) fonte: ', end='')
+            for i in range(len(self.source)):
+                print(f'{self.source[i]} ', end='')
+            print()            
+
+        if len(self.sink) == 0:
+            print('Não existem nodos sumidouro no grafo.')
+        else:
+            print('Nodo(s) sumidouro: ', end='')
+            for i in range(len(self.sink)):
+                print(f'{self.sink[i]} ', end='')
+            print()
+        
+        print()
+
 
     # mostra o grau do nodo
     def grade(self, node):
@@ -133,30 +180,34 @@ class Graph():  # classe para o grafo e seus métodos
     # mostra a matriz de adjacência do grafo
     def adjacencyMatrix(self):
         # mostra os nodos na horizontal - primeira linha
-        print('  ', end='')
+        print('     ', end='')
         for i in range(len(self.nodes)):
-            print(f'{self.nodes[i]} ', end='')
+            print(f'{self.nodes[i]}  ', end='')            
 
-        print()
+        print('\n')
 
         # procura pelos nodos que possuem arestas entre si
         for i in range(len(self.nodes)):
-            print(f'{self.nodes[i]} ', end='')
+            if len(self.nodes[i]) == 1:
+                print(f'{self.nodes[i]}    ', end='')
+            else:
+                print(f'{self.nodes[i]}   ', end='')
 
             for j in range(len(self.nodes)):
                 if self.directed:
                     if [self.nodes[i], self.nodes[j]] in self.edges:
-                        print('1 ', end='')
+                        print('1  ', end='')
                     else:
-                        print('0 ', end='')
+                        print('0  ', end='')
                 # a comparação abaixo é feita com 'or' para garantir que
                 #  tanto (1, 5) quanto (5, 1) sejam registradas corretamente (não direcionado)
                 else:
                     if [self.nodes[i], self.nodes[j]] in self.edges or [self.nodes[j], self.nodes[i]] in self.edges:
-                        print('1 ', end='')
+                        print('1  ', end='')
                     else:
-                        print('0 ', end='')
+                        print('0  ', end='')
             print()
+        print()
 
     # método para mudar a definição do grafo
     # não-orientado -> orientado e orientado -> não-orientado
@@ -182,7 +233,8 @@ def menu():
     print('5 - Inserir uma aresta')
     print('6 - Remover uma aresta')
     print('7 - Informar o grau de um nodo')
-    print('8 - Não-orientado -> orientado (e vice-versa)')
+    print('8 - Informar fontes e sumidouros do grafo')
+    print('9 - Não-orientado -> orientado (e vice-versa)')
     print('0 = Encerra o programa')
     print('====================================')
     option = input('Opção: ')
@@ -214,26 +266,31 @@ def main():
     while op != 0:
         try:
             op = int(menu())
+
+            if op == 1:
+                g.view()
+            elif op == 2:
+                g.adjacencyMatrix()
+            elif op == 3:
+                g.push(input('Informe o novo nodo: '))
+            elif op == 4:
+                g.pop(input('Informe o nodo a ser excluído: '))
+            elif op == 5:
+                g.insert(input('Informe a aresta a ser incluída: '))
+            elif op == 6:
+                g.remove(input('Informe a aresta a ser excluída: '))
+            elif op == 7:
+                g.grade(input('Informe o nodo: '))
+            elif op == 8:
+                g.identify()
+            elif op == 9:
+                g.direction()
+            elif op < 0 or op > 9:
+                print('\nERRO! Favor informar um valor entre 0 e 7.\n')
+
         except ValueError:
             print('\nFavor informar um valor válido.\n')
-        if op == 1:
-            g.view()
-        elif op == 2:
-            g.adjacencyMatrix()
-        elif op == 3:
-            g.push(input('Informe o novo nodo: '))
-        elif op == 4:
-            g.pop(input('Informe o nodo a ser excluído: '))
-        elif op == 5:
-            g.insert(input('Informe a aresta a ser incluída: '))
-        elif op == 6:
-            g.remove(input('Informe a aresta a ser excluída: '))
-        elif op == 7:
-            g.grade(input('Informe o nodo: '))
-        elif op == 8:
-            g.direction()
-        elif op < 0 or op > 8:
-            print('\nERRO! Favor informar um valor entre 0 e 7.\n')
+        
 
 
 main()
