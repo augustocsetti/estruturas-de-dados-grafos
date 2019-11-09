@@ -220,8 +220,11 @@ class Graph():  # classe para o grafo e seus métodos
 def readFile():
     with open('entrada.txt') as file:
         lines = [line.rstrip() for line in file]
-
-    return lines
+    for i in range(len(lines)):
+        lines[i] = lines[i].split(" ")
+    file.close()
+    
+    return lines[0], lines
 
 # menu do programa
 def menu():
@@ -244,18 +247,16 @@ def menu():
 
 def main():
 
-    # lê os dados do arquivo de entrada
-    data = readFile()
+    # lê os dados do arquivo de entrada e cria uma lista com
+    # os nodos na posição 0 e as arestas nas posições seguintes
+    nodes, data = readFile()
 
-    # cria uma lista com os nodos a partir da primeira linha lida do arquivo de entrada
-    nodes = []
-    for char in data[0]:
-        nodes.append(char)
 
     # as linhas seguintes são as arestas
     edges = []
     for linha in data[1:]:
         edges.append([linha[0], linha[1]])
+
 
     # cria o objeto passando como parâmetro os nodos e arestas
     g = Graph(nodes, edges)
