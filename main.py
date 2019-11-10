@@ -32,7 +32,7 @@ class Graph():  # classe para o grafo e seus métodos
     # método que remove um nodo
     # começa verificando se existem nodos no grafo
     # caso sim, verifica se o nodo informado pertence ou não ao grafo
-    def pop(self, node):
+    def pop(self, label):
         if len(self.nodes) == 0:
             print('\nERRO! Não existem nodos a excluir.\n')
         elif node not in self.nodes:
@@ -87,22 +87,23 @@ class Graph():  # classe para o grafo e seus métodos
 
     # remove arestas (verifica se existem arestas no grafo e
     # se a aresta informada existe no grafo
-    def remove(self, node, edge):
-        try:
-            for i in range(len(self.nodes)):
-                print(self.nodes[i].label)
-                print('aqui',node)
-                if self.nodes[i].label == node:
-                    print(self.nodes[i].label)
-                    print('aqui',node)
-                    for j in range(len(self.nodes[i].edges)):
-                        print(self.nodes[x].edges)
-                        self.nodes[i].edges.remove(edge)
-
-                        return
-
-        except:
-            print('\nERRO!\n')
+    def remove(self, label, edge):
+        label, edge = str(label), str(edge)
+  
+        # percorre os nodos
+        for i in range(len(self.nodes)):
+            # condição de grafo vazio
+            if len(self.nodes) == 0:
+                print('\nERRO! Não existem nodos no grafo.\n')
+            # busca label em nodos
+            if self.nodes[i].label == label:
+                try:
+                    self.nodes[i].edges.remove(edge)
+                except:
+                    print('\nERRO! Aresta não exite.\n')
+                return
+        # se o nodo não for encontrado
+        print('\nERRO! Nodo não existe.\n')
     
     
     # mostra lista com os nodos e suas arestas
@@ -114,7 +115,6 @@ class Graph():  # classe para o grafo e seus métodos
                     print(f'--> {self.nodes[i].edges[j]}', end='  ')
             
             print()
-
 
     # este método identifica as fontes e sumidouros de um grafo
     # nodos fonte são aqueles nos quais não temos arestas de entrada
@@ -264,8 +264,7 @@ def main():
     g = Graph(nodes, edges)
     g.view()
     g.adjacencyMatrix()#teste
-    #g.pop(input('Informe o nodo a ser excluído: '))
-    g.remove(3, 4)
+    g.pop(input('Informe o nodo a ser excluído: '))
     g.view()
     g.adjacencyMatrix()#teste
 '''
