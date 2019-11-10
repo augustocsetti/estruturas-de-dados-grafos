@@ -161,14 +161,31 @@ class Graph():  # classe para o grafo e seus métodos
 
 
     # mostra o grau do nodo
-    def grade(self, node):
-        if node not in self.nodes:
-            print('\nERRO! O nodo não existe.\n')
-        else:
-            self.entry = 0
-            self.exit = 0
+    def grade(self, node):        
+        self.index = -1
 
-            for edge in self.edges:
+        # procura o índice do nodo
+        for i in range(len(self.nodes)):
+            if node == self.nodes[i].label:
+                self.index = i
+                break
+
+        # caso o ínside seja -1 é porque o nodo informado não está na lista - volta para main()
+        if self.index == -1:
+            print('\nERRO! O nodo não existe.\n')
+            return
+        else:
+            # o grau de saída é o tamanho da varíavel que controla as arestas do nodo
+            self.exit = len(self.nodes[self.index].edges)
+            self.entry = 0
+            
+            # para o grau de entrada é necessário percorrer todos os nodos
+            # veriicando a ocorrência do nodo informado nas arestas dos outros nodos
+            for i in range(len(self.nodes)):
+                if node in self.nodes[i].edges:
+                    self.entry += 1            
+
+            '''for edge in self.edges:
                 if self.directed:
                     if node == edge[0]:
                         self.exit += 1
@@ -177,7 +194,7 @@ class Graph():  # classe para o grafo e seus métodos
                 else:
                     if node in edge:
                         self.entry += 1
-                        self.exit += 1
+                        self.exit += 1'''
 
             print(f'\nGrau de entrada do nodo {node}: {self.entry}')
             print(f'Grau de saída do nodo {node}: {self.exit}\n')
@@ -277,10 +294,11 @@ def main():
     g.insert(res)
     res = '4 7'.split()
     g.insert(res)
-    res = '4 3'.split()
+    res = '5 3'.split()
     g.insert(res)
-    g.view()#teste   
-    print(g.nodes[1].label)
+    g.view()#teste
+    g.grade('1')
+    g.grade('5')
    
 '''
 
