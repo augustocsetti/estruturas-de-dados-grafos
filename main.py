@@ -24,7 +24,7 @@ class Graph():  # classe para o grafo e seus métodos
     # método para inserir um novo nodo a um grafo já existente
     def push(self, node):
         for i in range(len(self.nodes)):
-            if node == self.nodes[i].node:
+            if node == self.nodes[i].label:
                 print('\nERRO! Este nodo já existe.\n')
                 return
 
@@ -66,21 +66,32 @@ class Graph():  # classe para o grafo e seus métodos
 
     # método para inserir arestras entre dois nodos já existentes
     # começa verificando se existem nodos no grafo
-    # a seguir verifica se o tamanho da entrada é igual a 2
-    # depois checa se a ligação é feita entre nodos que existem
-    # e finaliza verificando se é uma aresta nova ou se já existia
-    def insert(self, edge):
+    def insert(self, edge):           
         if len(self.nodes) == 0:
             print('\nERRO! Não existem nodos neste grafo.\n')
-        elif len(edge) != 2:
-            print('\nERRO! Favor informar dois dígitos.\n')
-        elif edge[0] not in self.nodes or edge[1] not in self.nodes:
+
+        self.exitNodeIndex = -1
+        self.entryNodeIndex = -1
+
+        # procura pelos índices dos nodos
+        for i in range(len(self.nodes)):
+            if self.nodes[i].label == edge[0]:
+                self.exitNodeIndex = i
+
+            if self.nodes[i].label == edge[1]:
+                self.entryNodeIndex = i
+        
+        # se um deles não existirem mostra mensamge de erro e so método
+        if self.entryNodeIndex == -1 or self.exitNodeIndex == -1:
             print('\nERRO! Um dos nodos não existe.\n')
-        elif [edge[0], edge[1]] in self.edges:
-            print('\nERRO! Aresta já existe.\n')
-        else:
-            self.edges.append([edge[0], edge[1]])
+            return
+
+        # veririca se a aresta já existe - caso não exista, adiciona as arestas do nodo
+        if edge[1] not in self.nodes[self.exitNodeIndex].edges:
+            self.nodes[self.exitNodeIndex].edges.append(edge[1])
             print('\nOperação bem sucedida.\n')
+        else:
+            print('\nERRO! Esta aresta já existe.\n')
 
 
     # método para remover arestas
@@ -98,7 +109,7 @@ class Graph():  # classe para o grafo e seus métodos
     # mostra lista com os nodos e suas arestas
     def view(self):
         for i in range(len(self.nodes)):
-            print(f'{self.nodes[i].node}: ', end='')
+            print(f'{self.nodes[i].label}: ', end='')
             if self.nodes[i].edges:
                 for j in range(len(self.nodes[i].edges)):
                     print(f'--> {self.nodes[i].edges[j]}', end='  ')
@@ -212,8 +223,8 @@ class Graph():  # classe para o grafo e seus métodos
 
 
 class Node():  # classe para os nodos e suas características
-    def __init__(self, node='', edges=''):
-        self.node = node
+    def __init__(self, label='', edges=''):
+        self.label = label
         self.edges = edges
 
 
@@ -261,11 +272,16 @@ def main():
 
     # cria o objeto passando como parâmetro os nodos e arestas
     g = Graph(nodes, edges)
-    g.view()#teste
-    g.push('12')
-    g.push('1')
-    g.push('7')
-    g.view()#teste
+    g.view()#teste  
+    res = '4 3'.split()
+    g.insert(res)
+    res = '4 7'.split()
+    g.insert(res)
+    res = '4 3'.split()
+    g.insert(res)
+    g.view()#teste   
+    print(g.nodes[1].label)
+   
 '''
 
     # testes
