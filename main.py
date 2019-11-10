@@ -22,12 +22,14 @@ class Graph():  # classe para o grafo e seus métodos
             self.nodes.append(Node(node, edgeReal))
 
     # método para inserir um novo nodo a um grafo já existente
-    def push(self, node):
-        if node not in self.nodes:            
-            self.nodes.append(node)
-            print('\nOperação bem sucedida.\n')
-        else:
-            print('\nERRO! Este nodo já existe.\n')
+    def push(self, label):
+        for i in range(len(self.nodes)):
+            if label == self.nodes[i].label:
+                print('\nERRO! Este nodo já existe.\n')
+                return
+
+        self.nodes.append(Node(label))
+        print('\nOperação bem sucedida.\n')
 
     # remove um nodo.
     def pop(self, label):
@@ -52,22 +54,37 @@ class Graph():  # classe para o grafo e seus métodos
         print('\nOperação bem sucedida.\n')
 
     # método para inserir arestras entre dois nodos já existentes
-    # começa verificando se existem nodos no grafo
-    # a seguir verifica se o tamanho da entrada é igual a 2
-    # depois checa se a ligação é feita entre nodos que existem
-    # e finaliza verificando se é uma aresta nova ou se já existia
-    def insert(self, edge):
+    def insert(self, edge):           
+        # verifica se existem nodos no grafo
         if len(self.nodes) == 0:
             print('\nERRO! Não existem nodos neste grafo.\n')
-        elif len(edge) != 2:
-            print('\nERRO! Favor informar dois dígitos.\n')
-        elif edge[0] not in self.nodes or edge[1] not in self.nodes:
+            return
+
+        edge = edge.split(" ")
+        
+        self.exitNodeIndex = -1
+        self.entryNodeIndex = -1
+
+        # procura pelos índices dos nodos
+        for i in range(len(self.nodes)):
+            if self.nodes[i].label == edge[0]:
+                self.exitNodeIndex = i
+
+            if self.nodes[i].label == edge[1]:
+                self.entryNodeIndex = i
+        
+        # se um deles não existirem mostra mensamge de erro e so método
+        if self.entryNodeIndex == -1 or self.exitNodeIndex == -1:
             print('\nERRO! Um dos nodos não existe.\n')
-        elif [edge[0], edge[1]] in self.edges:
-            print('\nERRO! Aresta já existe.\n')
-        else:
-            self.edges.append([edge[0], edge[1]])
+            return
+
+        # veririca se a aresta já existe e, caso não exista, adiciona as arestas do nodo
+        if edge[1] not in self.nodes[self.exitNodeIndex].edges:
+            self.nodes[self.exitNodeIndex].edges.append(edge[1])
             print('\nOperação bem sucedida.\n')
+        else:
+            print('\nERRO! Esta aresta já existe.\n')
+
 
     # remove arestas (verifica se existem arestas no grafo e
     # se a aresta informada existe no grafo
@@ -202,8 +219,8 @@ class Node():  # classe para os nodos e suas características
         self.edges = edges
 
 
-# função para receber entrada do arquivo
-def readFile():
+
+def readFile(): # função para receber entrada do arquivo
     with open('entrada.txt') as file:
         lines = [line.rstrip() for line in file]
     for i in range(len(lines)):
@@ -212,8 +229,8 @@ def readFile():
 
     return lines[0], lines
 
-# menu do programa
-def menu():
+
+def menu(): # menu do programa
     print('===============Opções===============')
     print('1 - Mostrar lista de adjacências')
     print('2 - Mostrar matriz de adjacências')
@@ -246,8 +263,9 @@ def main():
 
     # cria o objeto passando como parâmetro os nodos e arestas
     g = Graph(nodes, edges)
-    g.view()
     g.adjacencyMatrix()#teste
+    g.insert(input('Informe a aresta a ser incluída ([nodo1] [nodo2]): '))
+    g.adjacencyMatrix()
 '''
 
     # testes
@@ -266,9 +284,9 @@ def main():
             elif op == 4:
                 g.pop(input('Informe o nodo a ser excluído: '))
             elif op == 5:
-                g.insert(input('Informe a aresta a ser incluída: '))
+                g.insert(input('Informe a aresta a ser incluída ([nodo1] [nodo2]): '))
             elif op == 6:
-                g.remove(input('Informe a aresta a ser excluída: '))
+                g.remove(input('Informe a aresta a ser excluída ([nodo1] [nodo2]): '))
             elif op == 7:
                 g.grade(input('Informe o nodo: '))
             elif op == 8:
