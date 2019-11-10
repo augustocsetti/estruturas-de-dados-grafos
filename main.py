@@ -1,16 +1,16 @@
 '''
     Tarefa sobre Grafos
     Augusto Cardoso Setti - Matrícula 119994
-    Murilo
+    Murilo Vitória da Silva - Matrícula 124816
 
 Precisamos implementar usando a matriz também? Ou só mostrar está ok?
 
-1.Implementar um grafo usando a representação de  lista de adjacências. 
+1. Implementar um grafo usando a representação de  lista de adjacências. 
 2. Implementar um grafo usando a representação de matriz de adjacência.
 
     h) Busca em largura
     i) busca em profundidade
-    j) Implmentar os algoritmos Prim e Kruskal
+    j) Implementar os algoritmos Prim e Kruskal
 '''
 
 # bibliotecas utilizdas para redirecionar o output (print) do método grade
@@ -18,9 +18,10 @@ import sys, os
 
 
 class Node():  # classe para os nodos e suas características
-    def __init__(self, label='', edges=''):
+    def __init__(self, label='', edgesDirected='', edgesNotDirected=''):
         self.label = label
-        self.edges = edges
+        self.edgesDirected = edgesDirected
+        self.edgesNotDirected = edgesNotDirected
         self.gradeIn = 0
         self.gradeOut = 0
 
@@ -33,11 +34,16 @@ class Graph():  # classe para o grafo e seus métodos
         # percorre os nodos e encontra os que ele tem conexão (já direcionado)
         for node in nodes:
             edgeReal = []
+            edgeNotReal = []
             for edge in edges:
                 if edge[0] == node:
                     edgeReal.append(edge[1])
-            self.nodes.append(Node(node, edgeReal))
+                    edgeNotReal.append(edge[1])
+                if edge[1] == node:
+                    edgeNotReal.append(edge[0])
+            self.nodes.append(Node(node, edgeReal, edgeNotReal))
         self.directed = True
+        
 
     # método para inserir um novo nodo a um grafo já existente
     def push(self, label):
@@ -46,7 +52,7 @@ class Graph():  # classe para o grafo e seus métodos
                 print('\nERRO! Este nodo já existe.\n')
                 return
 
-        self.nodes.append(Node(label, []))
+        self.nodes.append(Node(label, [], []))
         print('\nOperação bem sucedida.\n')
 
     # remove um nodo.
@@ -57,12 +63,12 @@ class Graph():  # classe para o grafo e seus métodos
         for i in range(len(self.nodes)):
             if self.nodes[i].label != str(label):
                 j = 0
-                while j < (len(self.nodes[i].edges)):
-                    if self.nodes[i].edges[j] == label:
+                while j < (len(self.nodes[i].edgesDirected)):
+                    if self.nodes[i].edgesDirected[j] == label:
                         # exclui aresta
-                        self.remove(self.nodes[i].label+" "+self.nodes[i].edges[j])
+                        self.remove(self.nodes[i].label+" "+self.nodes[i].edgesDirected[j])
                         # condição para saída da repetição
-                        j = len(self.nodes[i].edges)
+                        j = len(self.nodes[i].edgesDirected)
                     j += 1
             # índice no nodo a ser excluído
             else:
@@ -95,52 +101,80 @@ class Graph():  # classe para o grafo e seus métodos
             if self.nodes[i].label == edge[1]:
                 self.entryNodeIndex = i
         
-        # se um deles não existirem mostra mensamge de erro e so método
+        # se um deles não existir mostra mensagem de erro e volta para main()
         if self.entryNodeIndex == -1 or self.exitNodeIndex == -1:
             print('\nERRO! Um dos nodos não existe.\n')
             return
 
-        # veririca se a aresta já existe e, caso não exista, adicioná-las ao nodo
-        if edge[1] not in self.nodes[self.exitNodeIndex].edges:
-                self.nodes[self.exitNodeIndex].edges.append(edge[1])
-                print('\nOperação bem sucedida.\n')
+        # verifica se a aresta já existe e, caso não exista, adicioná-las ao nodo
+        if edge[1] not in self.nodes[self.exitNodeIndex].edgesDirected:          
+            self.nodes[self.exitNodeIndex].edgesDirected.append(edge[1])
+            self.nodes[self.exitNodeIndex].edgesNotDirected.append(edge[1])
+            self.nodes[self.entryNodeIndex].edgesNotDirected.append(edge[0])
+            print('\nOperação bem sucedida.\n')           
         else:
             print('\nERRO! Esta aresta já existe.\n')
-
+        
+                        
     # remove arestas
     def remove(self, edge):
+        # condição de grafo vazio
+        if len(self.nodes) == 0:
+            print('\nERRO! Não existem nodos no grafo.\n')
+            return
+
         # verifica se existem arestas no grafo e
         # se a aresta informada existe no grafo
 
         # trata entrada
         edge = edge.split(" ")
         label, edge = edge[0], edge[1]
+        self.index = -1
 
         # percorre os nodos
         for i in range(len(self.nodes)):
-            # condição de grafo vazio
-            if len(self.nodes) == 0:
-                print('\nERRO! Não existem nodos no grafo.\n')
+            
+            # LISTA NÃO DIRECIONADA
+            for j in range(len(self.nodes)):
+                if self.nodes[j].label == edge:
+                    self.index = j
+                    break                    
+
+            if self.index != -1:
+                print()
+                self.nodes[self.index].edgesNotDirected.remove(label)
+            # / LISTA NÃO DIRECIONADA
+
             # busca label em nodos
             if self.nodes[i].label == label:
                 try:
-                    self.nodes[i].edges.remove(edge)
+                    self.nodes[i].edgesDirected.remove(edge)
+                    self.nodes[i].edgesNotDirected.remove(edge)
                 except:
                     print('\nERRO! Aresta não exite.\n')
                 return
+        
+        
         # se o nodo não for encontrado
         print('\nERRO! Nodo não existe.\n')
         
     # mostra lista com os nodos e suas arestas
-    def view(self):
+    def view(self):       
         for i in range(len(self.nodes)):
             print(f'{self.nodes[i].label}: ', end='')
-            if self.nodes[i].edges:
-                for j in range(len(self.nodes[i].edges)):
-                    print(f'--> {self.nodes[i].edges[j]}', end='  ')
+
+            if self.directed:            
+                if self.nodes[i].edgesDirected:
+                    for j in range(len(self.nodes[i].edgesDirected)):
+                        print(f'--> {self.nodes[i].edgesDirected[j]}', end='  ')
+            else:
+                if self.nodes[i].edgesNotDirected:                                
+                    for j in range(len(self.nodes[i].edgesNotDirected)):                        
+                        print(f'--> {self.nodes[i].edgesNotDirected[j]}', end='  ')
 
             print()
         print()
+
 
     # identifica as fontes e sumidouros do grafo
     def identify(self):
@@ -198,13 +232,13 @@ class Graph():  # classe para o grafo e seus métodos
             return
         else:
             # o grau de saída é o tamanho da varíavel que controla as arestas do nodo
-            self.exit = len(self.nodes[self.index].edges)
+            self.exit = len(self.nodes[self.index].edgesDirected)
             self.entry = 0
             
             # para o grau de entrada é necessário percorrer todos os nodos
             # veriicando a ocorrência do nodo informado nas arestas dos outros nodos
             for i in range(len(self.nodes)):
-                if node in self.nodes[i].edges:
+                if node in self.nodes[i].edgesDirected:
                     self.entry += 1            
             
             # salvando informação de grau na classe nodo
@@ -228,7 +262,7 @@ class Graph():  # classe para o grafo e seus métodos
             # mostra os nodos na vertical - primeira coluna
             print(f'{(self.nodes[i].label)}    ', end='')
             for j in range(len(self.nodes)):
-                if self.nodes[j].label in self.nodes[i].edges:
+                if self.nodes[j].label in self.nodes[i].edgesDirected:
                     print('1  ', end='')
                 else:
                     print('0  ', end='')
@@ -239,13 +273,6 @@ class Graph():  # classe para o grafo e seus métodos
     #ATENÇÃO! FAZER
     # método para mudar a definição do grafo 
     def guidance(self):
-        # orientado -> não-orientado
-        if self.directed:
-            pass
-        # não-orientado -> orientado
-        else:
-            pass
-
         self.directed = not self.directed
         print('\nOperação bem sucedida.\n')
 
