@@ -2,6 +2,15 @@
     Tarefa sobre Grafos
     Augusto Cardoso Setti - Matrícula 119994
     Murilo
+
+Precisamos implementar usando a matriz também? Ou só mostrar está ok?
+
+1.Implementar um grafo usando a representação de  lista de adjacências. 
+2. Implementar um grafo usando a representação de matriz de adjacência.
+
+    h) Busca em largura
+    i) busca em profundidade
+    j) Implmentar os algoritmos Prim e Kruskal
 '''
 
 # bibliotecas utilizdas para redirecionar o output (print) do método grade
