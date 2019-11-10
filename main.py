@@ -251,7 +251,7 @@ class Graph():  # classe para o grafo e seus métodos
         print('\nOperação bem sucedida.\n')
 
     # algoritmo de busca em largura BFS
-    def breadthSearch(self, G, s):
+    def breadthSearch(self, s):
         # 'G'    é a lista com nodos e 's' é o label do nodo inicial
         # bibliografia https://www.youtube.com/watch?v=cUlDbC0KrQo
 
@@ -268,7 +268,10 @@ class Graph():  # classe para o grafo e seus métodos
 
         pass
 
-    def indice(self,)
+    def indice(self, label):
+
+
+
 def readFile(): # função para receber entrada do arquivo
     with open('entrada.txt') as file:
         lines = [line.rstrip() for line in file]
