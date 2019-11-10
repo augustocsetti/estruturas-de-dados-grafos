@@ -29,43 +29,27 @@ class Graph():  # classe para o grafo e seus métodos
         else:
             print('\nERRO! Este nodo já existe.\n')
 
-    # método que remove um nodo
-    # começa verificando se existem nodos no grafo
-    # caso sim, verifica se o nodo informado pertence ou não ao grafo
+    # remove um nodo.
     def pop(self, label):
-        if len(self.nodes) == 0:
-            print('\nERRO! Não existem nodos a excluir.\n')
-        elif node not in self.nodes:
-            print('\nERRO! O nodo informado não existe.\n')
-        else:
+        # chama o método para remover arestas ligadas ao nodo (se houver)
+        for i in range(len(self.nodes)):
+            if self.nodes[i].label != str(label):
+                print(i)
+                print(len(self.nodes[i].edges))
+                for j in range(len(self.nodes[i].edges)):
+                    if self.nodes[i].edges[j] == label:
+                        # exclui aresta
+                        self.remove(self.nodes[i].label, self.nodes[i].edges[j])
+                        # condição para saída da repetição
+                        j = len(self.nodes[i].edges) + 1
+            # índice no nodo a ser excluído
+            else:
+                indexLabel = i
 
-            # chama o método para remover arestas
-            for i in range(len(self.aux)):
-                self.remove(self.aux[i])  
+        # exclui nodo
+        self.nodes.pop(indexLabel)
 
-            self.aux = []
-            self.index = -1
-
-            # procura o índice no nodo a ser excluído
-            for i in range(len(self.nodes)):
-                if node == self.nodes[i]:
-                    self.index = i
-                    break
-
-            if self.index >= 0:
-                # não confundir com o método pop implementado - abaixo é o de listas
-                self.nodes.pop(self.index)
-
-                # procura por arestas que contenham o nodo excluído
-                for i in range(len(self.edges)):
-                    if node in ''.join(self.edges[i]):
-                        self.aux.append(''.join(self.edges[i]))
-
-                # chama o método para remover arestas
-                for i in range(len(self.aux)):
-                    self.remove(self.aux[i])
-
-            print('\nOperação bem sucedida.\n')
+        print('\nOperação bem sucedida.\n')
 
     # método para inserir arestras entre dois nodos já existentes
     # começa verificando se existem nodos no grafo
