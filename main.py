@@ -1,6 +1,6 @@
 '''
     Tarefa sobre Grafos
-    Augusto
+    Augusto Cardoso Setti - Matrícula 119994
     Murilo
 '''
 
@@ -28,6 +28,7 @@ class Graph():  # classe para o grafo e seus métodos
                 if edge[0] == node:
                     edgeReal.append(edge[1])
             self.nodes.append(Node(node, edgeReal))
+        self.directed = True
 
     # método para inserir um novo nodo a um grafo já existente
     def push(self, label):
@@ -41,6 +42,8 @@ class Graph():  # classe para o grafo e seus métodos
 
     # remove um nodo.
     def pop(self, label):
+        # variável para armazenar posição do nodo a ser deletado
+        indexLabel = -1
         # chama o método para remover arestas ligadas ao nodo (se houver)
         for i in range(len(self.nodes)):
             if self.nodes[i].label != str(label):
@@ -57,18 +60,22 @@ class Graph():  # classe para o grafo e seus métodos
                 indexLabel = i
 
         # exclui nodo
-        self.nodes.pop(indexLabel)
+        if indexLabel != -1:
+            self.nodes.pop(indexLabel)
+            print('\nOperação bem sucedida.\n')
+        else:
+            print('\nERRO! Nodo não existe no grafo.\n')
 
-        print('\nOperação bem sucedida.\n')
-
+#QUANDO CRIO UM NODO E TENTO CONECTÁ-LO A OUTRO ACONTECE UM ERRO COM A LISTA! CHECAR
     # método para inserir arestras entre dois nodos já existentes
-    def insert(self, edge):           
+    def insert(self, edge):  
         # verifica se existem nodos no grafo
         if len(self.nodes) == 0:
             print('\nERRO! Não existem nodos neste grafo.\n')
             return
 
         edge = edge.split(" ")
+        print(edge)
         
         self.exitNodeIndex = -1
         self.entryNodeIndex = -1
@@ -93,12 +100,15 @@ class Graph():  # classe para o grafo e seus métodos
         else:
             print('\nERRO! Esta aresta já existe.\n')
 
-    # remove arestas (verifica se existem arestas no grafo e
-    # se a aresta informada existe no grafo
+    # remove arestas
     def remove(self, edge):
+        # verifica se existem arestas no grafo e
+        # se a aresta informada existe no grafo
+
+        # trata entrada
         edge = edge.split(" ")
         label, edge = edge[0], edge[1]
-        print(edge)
+
         # percorre os nodos
         for i in range(len(self.nodes)):
             # condição de grafo vazio
@@ -220,10 +230,16 @@ class Graph():  # classe para o grafo e seus métodos
             print()
         print()
 
-    # método para mudar a definição do grafo
+#FAZER
+    # método para mudar a definição do grafo 
     def guidance(self):
-        # não-orientado -> orientado e orientado -> não-orientado
-        # NOME do método pode ser melhorado
+        # orientado -> não-orientado
+        if self.directed:
+            pass
+        # não-orientado -> orientado
+        else:
+            pass
+
         self.directed = not self.directed
         print('\nOperação bem sucedida.\n')
 
@@ -273,15 +289,10 @@ def main():
     # cria o objeto passando como parâmetro os nodos e arestas
     g = Graph(nodes, edges)
 
-'''    g.adjacencyMatrix()
-    g.remove(input('Informe a aresta a ser excluída ([nodo1] [nodo2]): '))
-    g.adjacencyMatrix()
-    g.pop(input('Informe o nodo a ser excluído: '))
-    g.adjacencyMatrix()'''
-    # testes
+    # loop principal
     op = -1
-
     while op != 0:
+
         try:
             op = int(menu())
 
