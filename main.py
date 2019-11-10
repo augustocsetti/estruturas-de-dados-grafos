@@ -259,7 +259,7 @@ def main():
 
     # cria o objeto passando como parâmetro os nodos e arestas
     g = Graph(nodes, edges)
-    g.view()#teste
+    g.adjacencyMatrix()#teste
 '''
 
     # testes
