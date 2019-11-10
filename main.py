@@ -37,7 +37,7 @@ class Graph():  # classe para o grafo e seus métodos
                 print('\nERRO! Este nodo já existe.\n')
                 return
 
-        self.nodes.append(Node(label))
+        self.nodes.append(Node(label, []))
         print('\nOperação bem sucedida.\n')
 
     # remove um nodo.
@@ -66,7 +66,6 @@ class Graph():  # classe para o grafo e seus métodos
         else:
             print('\nERRO! Nodo não existe no grafo.\n')
 
-#QUANDO CRIO UM NODO E TENTO CONECTÁ-LO A OUTRO ACONTECE UM ERRO COM A LISTA! CHECAR
     # método para inserir arestras entre dois nodos já existentes
     def insert(self, edge):  
         # verifica se existem nodos no grafo
@@ -75,7 +74,6 @@ class Graph():  # classe para o grafo e seus métodos
             return
 
         edge = edge.split(" ")
-        print(edge)
         
         self.exitNodeIndex = -1
         self.entryNodeIndex = -1
@@ -93,10 +91,10 @@ class Graph():  # classe para o grafo e seus métodos
             print('\nERRO! Um dos nodos não existe.\n')
             return
 
-        # veririca se a aresta já existe e, caso não exista, adiciona as arestas do nodo
+        # veririca se a aresta já existe e, caso não exista, adicioná-las ao nodo
         if edge[1] not in self.nodes[self.exitNodeIndex].edges:
-            self.nodes[self.exitNodeIndex].edges.append(edge[1])
-            print('\nOperação bem sucedida.\n')
+                self.nodes[self.exitNodeIndex].edges.append(edge[1])
+                print('\nOperação bem sucedida.\n')
         else:
             print('\nERRO! Esta aresta já existe.\n')
 
@@ -230,7 +228,7 @@ class Graph():  # classe para o grafo e seus métodos
             print()
         print()
 
-#FAZER
+    #ATENÇÃO! FAZER
     # método para mudar a definição do grafo 
     def guidance(self):
         # orientado -> não-orientado
