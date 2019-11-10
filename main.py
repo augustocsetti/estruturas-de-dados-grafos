@@ -19,10 +19,11 @@ import sys, os
 
 class Node():  # classe para os nodos e suas características
     def __init__(self, label='', edges=''):
-        self.label = label
-        self.edges = edges
-        self.gradeIn = 0
-        self.gradeOut = 0
+        self.label = label # valor do nodo
+        self.edges = edges # arestas
+        self.gradeIn = 0 # grau de entrada
+        self.gradeOut = 0 # grau de saída
+        self.set = False # usado para marcar nodo na busca em largura
 
 
 class Graph():  # classe para o grafo e seus métodos
@@ -249,7 +250,25 @@ class Graph():  # classe para o grafo e seus métodos
         self.directed = not self.directed
         print('\nOperação bem sucedida.\n')
 
+    # algoritmo de busca em largura BFS
+    def breadthSearch(self, G, s):
+        # 'G'    é a lista com nodos e 's' é o label do nodo inicial
+        # bibliografia https://www.youtube.com/watch?v=cUlDbC0KrQo
 
+
+
+        #marca(s)
+        #enfileira(Q,s)
+        #enquanto Q for não nulo faça
+        #    u <- desenfilera(Q)
+        #    processa(u)
+        #    enquanto houver v não marcado adjacente a u faça
+        #        marque(v)
+        #        enfileira(Q,v)
+
+        pass
+
+    def indice(self,)
 def readFile(): # função para receber entrada do arquivo
     with open('entrada.txt') as file:
         lines = [line.rstrip() for line in file]
@@ -329,4 +348,3 @@ def main():
         
 
 main()
-
