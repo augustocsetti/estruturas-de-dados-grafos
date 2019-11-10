@@ -5,14 +5,15 @@
 '''
 
 # bibliotecas utilizdas para redirecionar o output (print) do método grade
-import io
-from contextlib import redirect_stdout
+import sys, os
 
 
 class Node():  # classe para os nodos e suas características
     def __init__(self, label='', edges=''):
         self.label = label
         self.edges = edges
+        self.gradeIn = 0
+        self.gradeOut = 0
 
 
 class Graph():  # classe para o grafo e seus métodos
@@ -47,7 +48,7 @@ class Graph():  # classe para o grafo e seus métodos
                 while j < (len(self.nodes[i].edges)):
                     if self.nodes[i].edges[j] == label:
                         # exclui aresta
-                        self.remove(self.nodes[i].label, self.nodes[i].edges[j])
+                        self.remove(self.nodes[i].label+" "+self.nodes[i].edges[j])
                         # condição para saída da repetição
                         j = len(self.nodes[i].edges)
                     j += 1
@@ -94,9 +95,10 @@ class Graph():  # classe para o grafo e seus métodos
 
     # remove arestas (verifica se existem arestas no grafo e
     # se a aresta informada existe no grafo
-    def remove(self, label, edge):
-        label, edge = str(label), str(edge)
-  
+    def remove(self, edge):
+        edge = edge.split(" ")
+        label, edge = edge[0], edge[1]
+        print(edge)
         # percorre os nodos
         for i in range(len(self.nodes)):
             # condição de grafo vazio
@@ -121,25 +123,28 @@ class Graph():  # classe para o grafo e seus métodos
                     print(f'--> {self.nodes[i].edges[j]}', end='  ')
             
             print()
+        print()
 
     # identifica as fontes e sumidouros do grafo
     def identify(self):
         self.source = [] # nodos fonte não têm arestas de entrada
         self.sink = [] # nodos sumidouros não têm aresta de saída
 
-        # utilizamos o método grade da classe para identificar os nodos
-        # como a função grade tem um output desnessário neste caso
-        # redirecionamos para uma variável, neste caso 'f'
-        f = io.StringIO()
-        with redirect_stdout(f):
+        # como a função grade tem um output desnessário usa-se
+        # as funções sys para bloquear e liberar a saída
+        sys.stdout = open(os.devnull, 'w')
 
-            for node in self.nodes:
-                self.grade(node)
-                if self.entry == 0:
-                    self.source.append(node)
-                if self.exit == 0:
-                    self.sink.append(node)
-        
+        for i in range(len(self.nodes)):
+            # chamamos o método grade para identificar os graus do nodo
+            self.grade(self.nodes[i].label)
+            # checa-se condição de fonte e sumidouro
+            if self.nodes[i].gradeIn == 0:
+                self.source.append(self.nodes[i].label)
+            if self.nodes[i].gradeOut == 0:
+                self.sink.append(self.nodes[i].label)
+
+        sys.stdout = sys.__stdout__
+
         print()
 
         if len(self.source) == 0:
@@ -184,6 +189,10 @@ class Graph():  # classe para o grafo e seus métodos
             for i in range(len(self.nodes)):
                 if node in self.nodes[i].edges:
                     self.entry += 1            
+            
+            # salvando informação de grau na classe nodo
+            self.nodes[self.index].gradeIn = self.entry
+            self.nodes[self.index].gradeOut = self.exit
 
             print(f'\nGrau de entrada do nodo {node}: {self.entry}')
             print(f'Grau de saída do nodo {node}: {self.exit}\n')
@@ -212,9 +221,9 @@ class Graph():  # classe para o grafo e seus métodos
         print()
 
     # método para mudar a definição do grafo
-    # não-orientado -> orientado e orientado -> não-orientado
-    # NOME do método pode ser melhorado
-    def direction(self):
+    def guidance(self):
+        # não-orientado -> orientado e orientado -> não-orientado
+        # NOME do método pode ser melhorado
         self.directed = not self.directed
         print('\nOperação bem sucedida.\n')
 
@@ -227,6 +236,7 @@ def readFile(): # função para receber entrada do arquivo
     file.close()
 
     return lines[0], lines
+
 
 def menu(): # menu do programa
     print('===============Opções===============')
@@ -263,16 +273,11 @@ def main():
     # cria o objeto passando como parâmetro os nodos e arestas
     g = Graph(nodes, edges)
 
-    g.adjacencyMatrix()#teste
-    g.grade('1')
-    g.grade('2')
-    g.grade('3')
-    g.grade('4')
-    g.grade('5')
-    g.identify()
-
-'''
-
+'''    g.adjacencyMatrix()
+    g.remove(input('Informe a aresta a ser excluída ([nodo1] [nodo2]): '))
+    g.adjacencyMatrix()
+    g.pop(input('Informe o nodo a ser excluído: '))
+    g.adjacencyMatrix()'''
     # testes
     op = -1
 
@@ -297,7 +302,7 @@ def main():
             elif op == 8:
                 g.identify()
             elif op == 9:
-                g.direction()
+                g.guidance()
             elif op < 0 or op > 9:
                 print('\nERRO! Favor informar um valor entre 0 e 7.\n')
 
@@ -305,5 +310,4 @@ def main():
             print('\nFavor informar um valor válido.\n')
         
 
-'''
 main()
