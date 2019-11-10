@@ -10,9 +10,10 @@ from contextlib import redirect_stdout
 
 class Graph():  # classe para o grafo e seus métodos
 
-    def __init__(self, nodes='', edges='', directed=False):
+    def __init__(self, nodes='', edges=''):
 
         self.nodes = []
+        # percorre os nodos e encontra os que ele tem conexão (já direcionado)
         for node in nodes:
             edgeReal = []
             for edge in edges:
@@ -20,7 +21,7 @@ class Graph():  # classe para o grafo e seus métodos
                     edgeReal.append(edge[1])
             self.nodes.append(Node(node, edgeReal))
 
-        self.directed = directed
+        #self.directed = directed
 
     # método para inserir um novo nodo a um grafo já existente
     def push(self, node):
