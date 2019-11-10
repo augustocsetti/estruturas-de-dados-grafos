@@ -34,14 +34,14 @@ class Graph():  # classe para o grafo e seus métodos
         # chama o método para remover arestas ligadas ao nodo (se houver)
         for i in range(len(self.nodes)):
             if self.nodes[i].label != str(label):
-                print(i)
-                print(len(self.nodes[i].edges))
-                for j in range(len(self.nodes[i].edges)):
+                j = 0
+                while j < (len(self.nodes[i].edges)):
                     if self.nodes[i].edges[j] == label:
                         # exclui aresta
                         self.remove(self.nodes[i].label, self.nodes[i].edges[j])
                         # condição para saída da repetição
-                        j = len(self.nodes[i].edges) + 1
+                        j = len(self.nodes[i].edges)
+                    j += 1
             # índice no nodo a ser excluído
             else:
                 indexLabel = i
@@ -246,9 +246,6 @@ def main():
 
     # cria o objeto passando como parâmetro os nodos e arestas
     g = Graph(nodes, edges)
-    g.view()
-    g.adjacencyMatrix()#teste
-    g.pop(input('Informe o nodo a ser excluído: '))
     g.view()
     g.adjacencyMatrix()#teste
 '''
