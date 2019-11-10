@@ -174,30 +174,21 @@ class Graph():  # classe para o grafo e seus métodos
         # mostra os nodos na horizontal - primeira linha
         print('     ', end='')
         for i in range(len(self.nodes)):
-            print(f'{self.nodes[i]}  ', end='')            
+            print(f'{self.nodes[i].node}  ', end='')            
 
         print('\n')
 
         # procura pelos nodos que possuem arestas entre si
         for i in range(len(self.nodes)):
-            if len(self.nodes[i]) == 1:
-                print(f'{self.nodes[i]}    ', end='')
-            else:
-                print(f'{self.nodes[i]}   ', end='')
+            # mostra os nodos na vertical - primeira coluna
+            print(f'{self.nodes[i].node}    ', end='')
 
             for j in range(len(self.nodes)):
-                if self.directed:
-                    if [self.nodes[i], self.nodes[j]] in self.edges:
-                        print('1  ', end='')
-                    else:
-                        print('0  ', end='')
-                # a comparação abaixo é feita com 'or' para garantir que
-                #  tanto (1, 5) quanto (5, 1) sejam registradas corretamente (não direcionado)
+                if self.nodes[j].node in self.nodes[i].edges:
+                    print('1  ', end='')
                 else:
-                    if [self.nodes[i], self.nodes[j]] in self.edges or [self.nodes[j], self.nodes[i]] in self.edges:
-                        print('1  ', end='')
-                    else:
-                        print('0  ', end='')
+                    print('0  ', end='')
+
             print()
         print()
 
@@ -259,6 +250,7 @@ def main():
 
     # cria o objeto passando como parâmetro os nodos e arestas
     g = Graph(nodes, edges)
+    g.view()
     g.adjacencyMatrix()#teste
 '''
 
