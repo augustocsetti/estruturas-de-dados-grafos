@@ -330,8 +330,8 @@ def main():
 
     # cria o objeto passando como parâmetro os nodos e arestas
     g = Graph(nodes, edges)
-    g.breadthSearch('s')
-'''    # loop principal
+
+    # loop principal
     op = -1
     while op != 0:
 
@@ -361,7 +361,7 @@ def main():
                 print('\nERRO! Favor informar um valor entre 0 e 7.\n')
 
         except ValueError:
-            print('\nFavor informar um valor válido.\n')'''
+            print('\nFavor informar um valor válido.\n')
         
 
 main()
