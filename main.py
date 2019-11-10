@@ -8,6 +8,13 @@
 import io
 from contextlib import redirect_stdout
 
+
+class Node():  # classe para os nodos e suas características
+    def __init__(self, label='', edges=''):
+        self.label = label
+        self.edges = edges
+
+
 class Graph():  # classe para o grafo e seus métodos
 
     def __init__(self, nodes='', edges=''):
@@ -85,7 +92,6 @@ class Graph():  # classe para o grafo e seus métodos
         else:
             print('\nERRO! Esta aresta já existe.\n')
 
-
     # remove arestas (verifica se existem arestas no grafo e
     # se a aresta informada existe no grafo
     def remove(self, label, edge):
@@ -105,8 +111,7 @@ class Graph():  # classe para o grafo e seus métodos
                 return
         # se o nodo não for encontrado
         print('\nERRO! Nodo não existe.\n')
-    
-    
+        
     # mostra lista com os nodos e suas arestas
     def view(self):
         for i in range(len(self.nodes)):
@@ -154,7 +159,6 @@ class Graph():  # classe para o grafo e seus métodos
             print()
         
         print()
-
 
     # mostra o grau do nodo
     def grade(self, node):        
@@ -215,12 +219,6 @@ class Graph():  # classe para o grafo e seus métodos
         print('\nOperação bem sucedida.\n')
 
 
-class Node():  # classe para os nodos e suas características
-    def __init__(self, label='', edges=''):
-        self.label = label
-        self.edges = edges
-
-
 def readFile(): # função para receber entrada do arquivo
     with open('entrada.txt') as file:
         lines = [line.rstrip() for line in file]
@@ -229,7 +227,6 @@ def readFile(): # função para receber entrada do arquivo
     file.close()
 
     return lines[0], lines
-
 
 def menu(): # menu do programa
     print('===============Opções===============')
@@ -248,6 +245,7 @@ def menu(): # menu do programa
 
     return option
 
+#==============================================================================================================#
 
 def main():
 
@@ -266,7 +264,11 @@ def main():
     g = Graph(nodes, edges)
 
     g.adjacencyMatrix()#teste
-    #g.grade('2')
+    g.grade('1')
+    g.grade('2')
+    g.grade('3')
+    g.grade('4')
+    g.grade('5')
     g.identify()
 
 '''
