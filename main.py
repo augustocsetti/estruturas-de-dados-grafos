@@ -226,10 +226,10 @@ class Graph():  # classe para o grafo e seus métodos
 
 
 class Node():  # classe para os nodos e suas características
-    def __init__(self, nodes='', edges=''):
+    def __init__(self, node='', edges=''):
         self.node = node
         self.edges = edges
-        print(self.nodes)#teste
+        print(self.node)#teste
         print(self.edges)#teste
 
 # função para receber entrada do arquivo
