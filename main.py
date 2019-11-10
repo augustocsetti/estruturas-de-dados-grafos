@@ -98,25 +98,11 @@ class Graph():  # classe para o grafo e seus métodos
     # mostra lista com os nodos e suas arestas
     def view(self):
         for i in range(len(self.nodes)):
-            print(f'{self.nodes[i]}: ', end='')
-
-            for j in range(len(self.edges)):
-                # grafo direcionado: verificamos o primeiro elemento da aresta
-                # ex.: nodo '1', aresta '12' => somente o '1' de um '12' é levado em conta
-                if self.directed:
-                    if self.nodes[i] == self.edges[j][0]:
-                        print(f'{self.edges[j]} ', end='')
-
-                # grafo não direcionado: o importante é evitar que arestas 'iguais' se repitam
-                # ex.: ['4', '5'] é igual a ['5', '4'] neste tipo de grafo
-                # para isso foi utilizada a função reverse() do tipo list
-                else:
-                    # necessário utilizr .copy() porque o python faz a atribuição por referência
-                    # isto modificava o elemento original, algo indesejável
-                    self.temp = self.edges[j].copy()
-                    self.temp.reverse()
-                    if self.nodes[i] in self.edges[j] and self.temp not in self.edges[:j]:
-                        print(f'{self.edges[j]} ', end='')
+            print(f'{self.nodes[i].node}: ', end='')
+            if self.nodes[i].edges:
+                for j in range(len(self.nodes[i].edges)):
+                    print(f'--> {self.nodes[i].edges[j]}', end='  ')
+            
             print()
 
 
@@ -229,8 +215,7 @@ class Node():  # classe para os nodos e suas características
     def __init__(self, node='', edges=''):
         self.node = node
         self.edges = edges
-        print(self.node)#teste
-        print(self.edges)#teste
+
 
 # função para receber entrada do arquivo
 def readFile():
@@ -276,6 +261,7 @@ def main():
 
     # cria o objeto passando como parâmetro os nodos e arestas
     g = Graph(nodes, edges)
+    g.view()#teste
 '''
 
     # testes
