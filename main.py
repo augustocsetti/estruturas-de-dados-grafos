@@ -129,7 +129,7 @@ class Graph():  # classe para o grafo e seus métodos
             if self.nodes[i].edges:
                 for j in range(len(self.nodes[i].edges)):
                     print(f'--> {self.nodes[i].edges[j]}', end='  ')
-            
+
             print()
         print()
 
@@ -217,8 +217,7 @@ class Graph():  # classe para o grafo e seus métodos
         # procura pelos nodos que possuem arestas entre si
         for i in range(len(self.nodes)):
             # mostra os nodos na vertical - primeira coluna
-            print(f'{self.nodes[i].label}    ', end='')
-
+            print(f'{(self.nodes[i].label)}    ', end='')
             for j in range(len(self.nodes)):
                 if self.nodes[j].label in self.nodes[i].edges:
                     print('1  ', end='')
@@ -306,6 +305,7 @@ def main():
                 g.insert(input('Informe a aresta a ser incluída ([nodo1] [nodo2]): '))
             elif op == 6:
                 g.remove(input('Informe a aresta a ser excluída ([nodo1] [nodo2]): '))
+                print()
             elif op == 7:
                 g.grade(input('Informe o nodo: '))
             elif op == 8:
