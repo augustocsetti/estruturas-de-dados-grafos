@@ -11,8 +11,15 @@ from contextlib import redirect_stdout
 class Graph():  # classe para o grafo e seus métodos
 
     def __init__(self, nodes='', edges='', directed=False):
-        self.nodes = nodes
-        self.edges = edges
+
+        self.nodes = []
+        for node in nodes:
+            edgeReal = []
+            for edge in edges:
+                if edge[0] == node:
+                    edgeReal.append(edge[1])
+            self.nodes.append(Node(node, edgeReal))
+
         self.directed = directed
 
     # método para inserir um novo nodo a um grafo já existente
@@ -216,6 +223,14 @@ class Graph():  # classe para o grafo e seus métodos
         self.directed = not self.directed
         print('\nOperação bem sucedida.\n')
 
+
+class Node():  # classe para os nodos e suas características
+    def __init__(self, nodes='', edges=''):
+        self.node = node
+        self.edges = edges
+        print(self.nodes)#teste
+        print(self.edges)#teste
+
 # função para receber entrada do arquivo
 def readFile():
     with open('entrada.txt') as file:
@@ -223,7 +238,7 @@ def readFile():
     for i in range(len(lines)):
         lines[i] = lines[i].split(" ")
     file.close()
-    
+
     return lines[0], lines
 
 # menu do programa
@@ -260,6 +275,7 @@ def main():
 
     # cria o objeto passando como parâmetro os nodos e arestas
     g = Graph(nodes, edges)
+'''
 
     # testes
     op = -1
@@ -293,5 +309,5 @@ def main():
             print('\nFavor informar um valor válido.\n')
         
 
-
+'''
 main()
