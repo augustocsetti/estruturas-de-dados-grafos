@@ -21,8 +21,6 @@ class Graph():  # classe para o grafo e seus métodos
                     edgeReal.append(edge[1])
             self.nodes.append(Node(node, edgeReal))
 
-        #self.directed = directed
-
     # método para inserir um novo nodo a um grafo já existente
     def push(self, node):
         if node not in self.nodes:            
