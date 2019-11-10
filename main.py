@@ -38,6 +38,11 @@ class Graph():  # classe para o grafo e seus métodos
         elif node not in self.nodes:
             print('\nERRO! O nodo informado não existe.\n')
         else:
+
+            # chama o método para remover arestas
+            for i in range(len(self.aux)):
+                self.remove(self.aux[i])  
+
             self.aux = []
             self.index = -1
 
@@ -80,23 +85,30 @@ class Graph():  # classe para o grafo e seus métodos
             self.edges.append([edge[0], edge[1]])
             print('\nOperação bem sucedida.\n')
 
+    # remove arestas (verifica se existem arestas no grafo e
+    # se a aresta informada existe no grafo
+    def remove(self, node, edge):
+        try:
+            for i in range(len(self.nodes)):
+                print(self.nodes[i].label)
+                print('aqui',node)
+                if self.nodes[i].label == node:
+                    print(self.nodes[i].label)
+                    print('aqui',node)
+                    for j in range(len(self.nodes[i].edges)):
+                        print(self.nodes[x].edges)
+                        self.nodes[i].edges.remove(edge)
 
-    # método para remover arestas
-    # verifica se existem arestas no grafo
-    # logo após verifica se a aresta informada existe no grafo
-    def remove(self, edge):
-        if len(self.edges) == 0:
-            print('\nERRO! Não existem arestas a ser exluídas.\n')
-        elif [edge[0], edge[1]] not in self.edges:
-            print('\nERRO! A aresta informada não existe.\n')
-        else:
-            self.edges.remove([edge[0], edge[1]])
-            print('\nOperação bem sucedida.\n')
+                        return
 
+        except:
+            print('\nERRO!\n')
+    
+    
     # mostra lista com os nodos e suas arestas
     def view(self):
         for i in range(len(self.nodes)):
-            print(f'{self.nodes[i].node}: ', end='')
+            print(f'{self.nodes[i].label}: ', end='')
             if self.nodes[i].edges:
                 for j in range(len(self.nodes[i].edges)):
                     print(f'--> {self.nodes[i].edges[j]}', end='  ')
@@ -174,17 +186,17 @@ class Graph():  # classe para o grafo e seus métodos
         # mostra os nodos na horizontal - primeira linha
         print('     ', end='')
         for i in range(len(self.nodes)):
-            print(f'{self.nodes[i].node}  ', end='')            
+            print(f'{self.nodes[i].label}  ', end='')            
 
         print('\n')
 
         # procura pelos nodos que possuem arestas entre si
         for i in range(len(self.nodes)):
             # mostra os nodos na vertical - primeira coluna
-            print(f'{self.nodes[i].node}    ', end='')
+            print(f'{self.nodes[i].label}    ', end='')
 
             for j in range(len(self.nodes)):
-                if self.nodes[j].node in self.nodes[i].edges:
+                if self.nodes[j].label in self.nodes[i].edges:
                     print('1  ', end='')
                 else:
                     print('0  ', end='')
@@ -201,8 +213,8 @@ class Graph():  # classe para o grafo e seus métodos
 
 
 class Node():  # classe para os nodos e suas características
-    def __init__(self, node='', edges=''):
-        self.node = node
+    def __init__(self, label='', edges=''):
+        self.label = label
         self.edges = edges
 
 
@@ -250,6 +262,10 @@ def main():
 
     # cria o objeto passando como parâmetro os nodos e arestas
     g = Graph(nodes, edges)
+    g.view()
+    g.adjacencyMatrix()#teste
+    #g.pop(input('Informe o nodo a ser excluído: '))
+    g.remove(3, 4)
     g.view()
     g.adjacencyMatrix()#teste
 '''
