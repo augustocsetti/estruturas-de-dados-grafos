@@ -117,15 +117,12 @@ class Graph():  # classe para o grafo e seus métodos
             
             print()
 
-    # este método identifica as fontes e sumidouros de um grafo
-    # nodos fonte são aqueles nos quais não temos arestas de entrada
-    # já os nodos sumidouros são aqueles em que não existe aresta de saída
-    # utilizamos o método grade da classe para identificar estes nodos
-    # eles são então armazenados em duas listas diferentes
+    # identifica as fontes e sumidouros do grafo
     def identify(self):
-        self.source = []
-        self.sink = []
+        self.source = [] # nodos fonte não têm arestas de entrada
+        self.sink = [] # nodos sumidouros não têm aresta de saída
 
+        # utilizamos o método grade da classe para identificar os nodos
         # como a função grade tem um output desnessário neste caso
         # redirecionamos para uma variável, neste caso 'f'
         f = io.StringIO()
@@ -133,12 +130,11 @@ class Graph():  # classe para o grafo e seus métodos
 
             for node in self.nodes:
                 self.grade(node)
-
                 if self.entry == 0:
                     self.source.append(node)
                 if self.exit == 0:
                     self.sink.append(node)
-
+        
         print()
 
         if len(self.source) == 0:
@@ -161,23 +157,29 @@ class Graph():  # classe para o grafo e seus métodos
 
 
     # mostra o grau do nodo
-    def grade(self, node):
-        if node not in self.nodes:
-            print('\nERRO! O nodo não existe.\n')
-        else:
-            self.entry = 0
-            self.exit = 0
+    def grade(self, node):        
+        self.index = -1
 
-            for edge in self.edges:
-                if self.directed:
-                    if node == edge[0]:
-                        self.exit += 1
-                    if node == edge[1]:
-                        self.entry += 1
-                else:
-                    if node in edge:
-                        self.entry += 1
-                        self.exit += 1
+        # procura o índice do nodo
+        for i in range(len(self.nodes)):
+            if node == self.nodes[i].label:
+                self.index = i
+                break
+
+        # caso o índide seja -1 é porque o nodo informado não está na lista - volta para main()
+        if self.index == -1:
+            print('\nERRO! O nodo não existe.\n')
+            return
+        else:
+            # o grau de saída é o tamanho da varíavel que controla as arestas do nodo
+            self.exit = len(self.nodes[self.index].edges)
+            self.entry = 0
+            
+            # para o grau de entrada é necessário percorrer todos os nodos
+            # veriicando a ocorrência do nodo informado nas arestas dos outros nodos
+            for i in range(len(self.nodes)):
+                if node in self.nodes[i].edges:
+                    self.entry += 1            
 
             print(f'\nGrau de entrada do nodo {node}: {self.entry}')
             print(f'Grau de saída do nodo {node}: {self.exit}\n')
@@ -217,7 +219,6 @@ class Node():  # classe para os nodos e suas características
     def __init__(self, label='', edges=''):
         self.label = label
         self.edges = edges
-
 
 
 def readFile(): # função para receber entrada do arquivo
@@ -263,9 +264,11 @@ def main():
 
     # cria o objeto passando como parâmetro os nodos e arestas
     g = Graph(nodes, edges)
+
     g.adjacencyMatrix()#teste
-    g.insert(input('Informe a aresta a ser incluída ([nodo1] [nodo2]): '))
-    g.adjacencyMatrix()
+    #g.grade('2')
+    g.identify()
+
 '''
 
     # testes
