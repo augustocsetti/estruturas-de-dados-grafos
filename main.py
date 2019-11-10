@@ -8,7 +8,6 @@ Precisamos implementar usando a matriz também? Ou só mostrar está ok?
 1.Implementar um grafo usando a representação de  lista de adjacências. 
 2. Implementar um grafo usando a representação de matriz de adjacência.
 
-    h) Busca em largura
     i) busca em profundidade
     j) Implmentar os algoritmos Prim e Kruskal
 '''
@@ -252,24 +251,39 @@ class Graph():  # classe para o grafo e seus métodos
 
     # algoritmo de busca em largura BFS
     def breadthSearch(self, s):
-        # 'G'    é a lista com nodos e 's' é o label do nodo inicial
+        # 's' é o label do nodo inicial
         # bibliografia https://www.youtube.com/watch?v=cUlDbC0KrQo
+        
+        line = []
 
+        # índice de s
+        indexS = self.index(s)
+        # marca nodo
+        self.nodes[indexS].set = True
+        # add a fila
+        line.append(indexS)
 
+        # percorre todos os valores que possuem conexão com ramo de 's'
+        while(len(line) != 0):
+            # define primeiro valor da fila para analisar arestas
+            u = line[0]
 
-        #marca(s)
-        #enfileira(Q,s)
-        #enquanto Q for não nulo faça
-        #    u <- desenfilera(Q)
-        #    processa(u)
-        #    enquanto houver v não marcado adjacente a u faça
-        #        marque(v)
-        #        enfileira(Q,v)
+            line.pop(0)
+            #processa(u) faz alguma coisa com o nodo percorrido
 
-        pass
+            # percorre arestas do nodo u e checa se já foram setadas
+            # se não seta e adiciona a fila
+            for i in range (len(self.nodes[u].edges)):
+                indexTemp = self.index(self.nodes[u].edges[i])
+                if self.nodes[indexTemp].set == False:
+                    self.nodes[indexTemp].set = True
+                    line.append(indexTemp)
 
-    def indice(self, label):
-
+    # retorna índice (da lista self.grafos) de algum nodo
+    def index(self, label):
+        for i in range(len(self.nodes)):
+            if self.nodes[i].label == str(label):
+                return i
 
 
 def readFile(): # função para receber entrada do arquivo
@@ -316,8 +330,8 @@ def main():
 
     # cria o objeto passando como parâmetro os nodos e arestas
     g = Graph(nodes, edges)
-
-    # loop principal
+    g.breadthSearch('s')
+'''    # loop principal
     op = -1
     while op != 0:
 
@@ -347,7 +361,7 @@ def main():
                 print('\nERRO! Favor informar um valor entre 0 e 7.\n')
 
         except ValueError:
-            print('\nFavor informar um valor válido.\n')
+            print('\nFavor informar um valor válido.\n')'''
         
 
 main()
