@@ -8,7 +8,6 @@ Precisamos implementar usando a matriz também? Ou só mostrar está ok?
 1.Implementar um grafo usando a representação de  lista de adjacências. 
 2. Implementar um grafo usando a representação de matriz de adjacência.
 
-    h) Busca em largura
     i) busca em profundidade
     j) Implmentar os algoritmos Prim e Kruskal
 '''
@@ -19,10 +18,11 @@ import sys, os
 
 class Node():  # classe para os nodos e suas características
     def __init__(self, label='', edges=''):
-        self.label = label
-        self.edges = edges
-        self.gradeIn = 0
-        self.gradeOut = 0
+        self.label = label # valor do nodo
+        self.edges = edges # arestas
+        self.gradeIn = 0 # grau de entrada
+        self.gradeOut = 0 # grau de saída
+        self.set = False # usado para marcar nodo na busca em largura
 
 
 class Graph():  # classe para o grafo e seus métodos
@@ -249,6 +249,42 @@ class Graph():  # classe para o grafo e seus métodos
         self.directed = not self.directed
         print('\nOperação bem sucedida.\n')
 
+    # algoritmo de busca em largura BFS
+    def breadthSearch(self, s):
+        # 's' é o label do nodo inicial
+        # bibliografia https://www.youtube.com/watch?v=cUlDbC0KrQo
+        
+        line = []
+
+        # índice de s
+        indexS = self.index(s)
+        # marca nodo
+        self.nodes[indexS].set = True
+        # add a fila
+        line.append(indexS)
+
+        # percorre todos os valores que possuem conexão com ramo de 's'
+        while(len(line) != 0):
+            # define primeiro valor da fila para analisar arestas
+            u = line[0]
+
+            line.pop(0)
+            #processa(u) faz alguma coisa com o nodo percorrido
+
+            # percorre arestas do nodo u e checa se já foram setadas
+            # se não seta e adiciona a fila
+            for i in range (len(self.nodes[u].edges)):
+                indexTemp = self.index(self.nodes[u].edges[i])
+                if self.nodes[indexTemp].set == False:
+                    self.nodes[indexTemp].set = True
+                    line.append(indexTemp)
+
+    # retorna índice (da lista self.grafos) de algum nodo
+    def index(self, label):
+        for i in range(len(self.nodes)):
+            if self.nodes[i].label == str(label):
+                return i
+
 
 def readFile(): # função para receber entrada do arquivo
     with open('entrada.txt') as file:
@@ -294,8 +330,8 @@ def main():
 
     # cria o objeto passando como parâmetro os nodos e arestas
     g = Graph(nodes, edges)
-
-    # loop principal
+    g.breadthSearch('s')
+'''    # loop principal
     op = -1
     while op != 0:
 
@@ -325,8 +361,7 @@ def main():
                 print('\nERRO! Favor informar um valor entre 0 e 7.\n')
 
         except ValueError:
-            print('\nFavor informar um valor válido.\n')
+            print('\nFavor informar um valor válido.\n')'''
         
 
 main()
-
