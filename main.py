@@ -10,18 +10,26 @@ from contextlib import redirect_stdout
 
 class Graph():  # classe para o grafo e seus métodos
 
-    def __init__(self, nodes='', edges='', directed=False):
-        self.nodes = nodes
-        self.edges = edges
-        self.directed = directed
+    def __init__(self, nodes='', edges=''):
+
+        self.nodes = []
+        # percorre os nodos e encontra os que ele tem conexão (já direcionado)
+        for node in nodes:
+            edgeReal = []
+            for edge in edges:
+                if edge[0] == node:
+                    edgeReal.append(edge[1])
+            self.nodes.append(Node(node, edgeReal))
 
     # método para inserir um novo nodo a um grafo já existente
     def push(self, node):
-        if node not in self.nodes:            
-            self.nodes.append(node)
-            print('\nOperação bem sucedida.\n')
-        else:
-            print('\nERRO! Este nodo já existe.\n')
+        for i in range(len(self.nodes)):
+            if node == self.nodes[i].node:
+                print('\nERRO! Este nodo já existe.\n')
+                return
+
+        self.nodes.append(Node(node))
+        print('\nOperação bem sucedida.\n')
 
     # método que remove um nodo
     # começa verificando se existem nodos no grafo
@@ -90,25 +98,11 @@ class Graph():  # classe para o grafo e seus métodos
     # mostra lista com os nodos e suas arestas
     def view(self):
         for i in range(len(self.nodes)):
-            print(f'{self.nodes[i]}: ', end='')
-
-            for j in range(len(self.edges)):
-                # grafo direcionado: verificamos o primeiro elemento da aresta
-                # ex.: nodo '1', aresta '12' => somente o '1' de um '12' é levado em conta
-                if self.directed:
-                    if self.nodes[i] == self.edges[j][0]:
-                        print(f'{self.edges[j]} ', end='')
-
-                # grafo não direcionado: o importante é evitar que arestas 'iguais' se repitam
-                # ex.: ['4', '5'] é igual a ['5', '4'] neste tipo de grafo
-                # para isso foi utilizada a função reverse() do tipo list
-                else:
-                    # necessário utilizr .copy() porque o python faz a atribuição por referência
-                    # isto modificava o elemento original, algo indesejável
-                    self.temp = self.edges[j].copy()
-                    self.temp.reverse()
-                    if self.nodes[i] in self.edges[j] and self.temp not in self.edges[:j]:
-                        print(f'{self.edges[j]} ', end='')
+            print(f'{self.nodes[i].node}: ', end='')
+            if self.nodes[i].edges:
+                for j in range(len(self.nodes[i].edges)):
+                    print(f'--> {self.nodes[i].edges[j]}', end='  ')
+            
             print()
 
 
@@ -216,12 +210,22 @@ class Graph():  # classe para o grafo e seus métodos
         self.directed = not self.directed
         print('\nOperação bem sucedida.\n')
 
+
+class Node():  # classe para os nodos e suas características
+    def __init__(self, node='', edges=''):
+        self.node = node
+        self.edges = edges
+
+
 # função para receber entrada do arquivo
 def readFile():
     with open('entrada.txt') as file:
         lines = [line.rstrip() for line in file]
+    for i in range(len(lines)):
+        lines[i] = lines[i].split(" ")
+    file.close()
 
-    return lines
+    return lines[0], lines
 
 # menu do programa
 def menu():
@@ -244,21 +248,25 @@ def menu():
 
 def main():
 
-    # lê os dados do arquivo de entrada
-    data = readFile()
+    # lê os dados do arquivo de entrada e cria uma lista com
+    # os nodos na posição 0 e as arestas nas posições seguintes
+    nodes, data = readFile()
 
-    # cria uma lista com os nodos a partir da primeira linha lida do arquivo de entrada
-    nodes = []
-    for char in data[0]:
-        nodes.append(char)
 
     # as linhas seguintes são as arestas
     edges = []
     for linha in data[1:]:
         edges.append([linha[0], linha[1]])
 
+
     # cria o objeto passando como parâmetro os nodos e arestas
     g = Graph(nodes, edges)
+    g.view()#teste
+    g.push('12')
+    g.push('1')
+    g.push('7')
+    g.view()#teste
+'''
 
     # testes
     op = -1
@@ -292,5 +300,5 @@ def main():
             print('\nFavor informar um valor válido.\n')
         
 
-
+'''
 main()
