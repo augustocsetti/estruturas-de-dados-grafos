@@ -4,6 +4,7 @@
     Murilo Vitória da Silva - Matrícula 124816
 
 QUESTÕES
+- Acertar buscas com edgesD edgesND
 - Criar classes específicas para buscas? Graph está ficando muito grande.
 - Melhorar mostra informações com busca por profundidade e largura
 - Aconteceu um erro quando estava testando várias maneiras de busca por largura
