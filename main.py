@@ -1,19 +1,29 @@
 '''
     Tarefa sobre Grafos
     Augusto Cardoso Setti - Matrícula 119994
-    Murilo
+    Murilo Vitória da Silva - Matrícula 124816
 
-Precisamos implementar usando a matriz também? Ou só mostrar está ok?
+QUESTÕES
+- Precisamos implementar usando a matriz também? Ou só mostrar está ok?
+- Criar classes específicas para buscas? Graph está ficando muito grande.
+- Como mostrar o resultado do algoritmo de busca por largura
+- Melhorar mostra informações com busca por profundidade
+- Aconteceu um erro quando estava testando várias maneiras de busca por largura
+uma erro de char~int com uma lista. Testar!
 
-1.Implementar um grafo usando a representação de  lista de adjacências. 
-2. Implementar um grafo usando a representação de matriz de adjacência.
-
-    i) busca em profundidade
-    j) Implmentar os algoritmos Prim e Kruskal
+FALTA
+- Implementar um grafo usando a representação de matriz de adjacência.
+- Método para mudar a definição do grafo (orientado <-> não orientado)
+- Implmentar os algoritmos Prim e Kruskal
 '''
 
 # bibliotecas utilizdas para redirecionar o output (print) do método grade
 import sys, os
+
+# definição de estados para busca em profundidade
+WHITE = 0
+GRAY = 1
+BLACK = 2
 
 
 class Node():  # classe para os nodos e suas características
@@ -22,7 +32,11 @@ class Node():  # classe para os nodos e suas características
         self.edges = edges # arestas
         self.gradeIn = 0 # grau de entrada
         self.gradeOut = 0 # grau de saída
-        self.set = False # usado para marcar nodo na busca em largura
+
+        # infos para funções de busca
+        self.set = False # usado para marcar nodo em buscas
+        self.father = None # marcação do nodo pai na busca por profundidade
+        self.time = [] # tempo de abertura e fechamento na busca por profundidade
 
 
 class Graph():  # classe para o grafo e seus métodos
@@ -249,10 +263,15 @@ class Graph():  # classe para o grafo e seus métodos
         self.directed = not self.directed
         print('\nOperação bem sucedida.\n')
 
+    #ATENÇÃO! CASO COM ERRO
     # algoritmo de busca em largura BFS
     def breadthSearch(self, s):
         # 's' é o label do nodo inicial
         # bibliografia https://www.youtube.com/watch?v=cUlDbC0KrQo
+
+        # inicializa set de todos elementos
+        for elem in self.nodes:
+            elem.set = False
         
         line = []
 
@@ -278,6 +297,54 @@ class Graph():  # classe para o grafo e seus métodos
                 if self.nodes[indexTemp].set == False:
                     self.nodes[indexTemp].set = True
                     line.append(indexTemp)
+
+    # algoritmo de busca em largura DFS-1
+    def depthSearch(self):
+        # bibliografia https://www.youtube.com/watch?v=0B6VfRbppkE
+
+        # inicializa set de todos elementos
+        for elem in self.nodes:
+            elem.set = WHITE
+        
+        # tempo de abertura e fechamento
+        self.time = 0
+        # percorre todos os nodos
+        for i in range(len(self.nodes)):
+            if self.nodes[i].set == WHITE:
+                self.depthSearchVisit(i)
+
+    # algoritmo de busca em largura DFS-2
+    def depthSearchVisit(self, u):
+        # marca primeira passagem sobre o nodo (cinza)
+        self.nodes[u].set = GRAY
+
+        # incrementa e adiciona tempo de entrada do nodo
+        self.time += 1
+        self.nodes[u].time.append(self.time)
+
+        # busca nodos vizinhos
+        for i in range(len(self.nodes[u].edges)):
+            indexTemp = self.index(self.nodes[u].edges[i])
+            # se não tiver sido 'aberto' (nodo branco) acessa e chama recursão
+            if self.nodes[indexTemp].set == WHITE:
+                # define pai do nodo encontrado
+                self.nodes[indexTemp].father = self.nodes[u].label
+                self.depthSearchVisit(indexTemp)
+
+        # fecha nodo (seta cor preto) e adiciona tempo de saída
+        self.nodes[u].set = BLACK
+        self.time += 1
+        self.nodes[u].time.append(self.time)
+
+    #ATENÇÃO! MELHORAR
+    # printa informações de cada nodo pós busca por profundidade
+    def infosDepthSearch(self):
+        for elem in self.nodes:
+            print('label ',elem.label)
+            print('pai ',elem.father)
+            print('tempo ',elem.time)
+            print('cor', elem.set)
+            print()
 
     # retorna índice (da lista self.grafos) de algum nodo
     def index(self, label):
@@ -307,6 +374,8 @@ def menu(): # menu do programa
     print('7 - Informar o grau de um nodo')
     print('8 - Informar fontes e sumidouros do grafo')
     print('9 - Não-orientado -> orientado (e vice-versa)')
+    print('10 - Breadth First Search')
+    print('11 - Depth First Search')
     print('0 = Encerra o programa')
     print('====================================')
     option = input('Opção: ')
@@ -330,8 +399,9 @@ def main():
 
     # cria o objeto passando como parâmetro os nodos e arestas
     g = Graph(nodes, edges)
-    g.breadthSearch('s')
-'''    # loop principal
+
+
+    # loop principal
     op = -1
     while op != 0:
 
@@ -357,11 +427,16 @@ def main():
                 g.identify()
             elif op == 9:
                 g.guidance()
-            elif op < 0 or op > 9:
-                print('\nERRO! Favor informar um valor entre 0 e 7.\n')
+            elif op == 10:
+                g.breadthSearch(input('Informe o nodo para iniciar a busca: '))
+            elif op == 11:
+                g.depthSearch()
+                g.infosDepthSearch()                
+            elif op < 0 or op > 11:
+                print('\nERRO! Favor informar um valor entre 0 e 11.\n')
 
         except ValueError:
-            print('\nFavor informar um valor válido.\n')'''
+            print('\nFavor informar um valor válido.\n')
         
 
 main()
