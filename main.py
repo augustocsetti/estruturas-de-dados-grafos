@@ -4,9 +4,11 @@
     Murilo Vitória da Silva - Matrícula 124816
 
 QUESTÕES
+
 - Acertar buscas com edgesD edgesND
 - Criar classes específicas para buscas? Graph está ficando muito grande.
 - Melhorar mostra informações com busca por profundidade e largura
+
 - Aconteceu um erro quando estava testando várias maneiras de busca por largura
 uma erro de char~int com uma lista. Testar!
 
@@ -25,6 +27,7 @@ BLACK = 2
 
 
 class Node():  # classe para os nodos e suas características
+
     def __init__(self, label='', edgesD='', edgesND=''):
         self.label = label # valor do nodo
         self.edgesD = edgesD # arestas direcionadas
@@ -56,6 +59,7 @@ class Graph():  # classe para o grafo e seus métodos
                     tempND.append(edge[0])
             # cria nodo e adiciona a lista de nodos
             self.nodes.append(Node(node, tempD, tempND))
+
         self.directed = True
 
     # método para inserir um novo nodo a um grafo já existente
@@ -66,6 +70,7 @@ class Graph():  # classe para o grafo e seus métodos
                 return
 
         self.nodes.append(Node(label, [], []))
+       
         print('\nOperação bem sucedida.\n')
 
     # remove um nodo.
@@ -102,7 +107,7 @@ class Graph():  # classe para o grafo e seus métodos
             return
 
         edge = edge.split(" ")
-        
+
         # procura pelos índices dos nodos
         self.exitNodeIndex = self.index(edge[0])
         self.entryNodeIndex = self.index(edge[1])
@@ -113,6 +118,7 @@ class Graph():  # classe para o grafo e seus métodos
             return
 
         # veririca se a aresta já existe e, caso não exista, adicioná-las ao nodo
+
         if edge[1] not in self.nodes[self.exitNodeIndex].edgesD:
                 self.nodes[self.exitNodeIndex].edgesD.append(edge[1])
                 self.nodes[self.exitNodeIndex].edgesND.append(edge[1])
@@ -221,6 +227,7 @@ class Graph():  # classe para o grafo e seus métodos
         self.indexTemp = self.index(label)
 
         # caso o índide seja -1 é porque o nodo informado não está na lista - volta para main()
+
         if self.indexTemp == None:
             print('\nERRO! O nodo não existe.\n')
             return
@@ -270,9 +277,10 @@ class Graph():  # classe para o grafo e seus métodos
                         print('1  ', end='')
                     else:
                         print('0  ', end='')
-
+                        
             print()
         print()
+
 
     # método para mudar a definição do grafo 
     def guidance(self):        
@@ -368,7 +376,13 @@ class Graph():  # classe para o grafo e seus métodos
             if self.nodes[i].label == str(label):
                 return i
 
+    # retorna índice (da lista self.grafos) de algum nodo
+    def index(self, label):
+        for i in range(len(self.nodes)):
+            if self.nodes[i].label == str(label):
+                return i
 
+              
 def readFile(): # função para receber entrada do arquivo
     with open('entrada.txt') as file:
         lines = [line.rstrip() for line in file]

@@ -1,8 +1,21 @@
-1 2 3 4 5
-1 2
-1 5
-2 3
-2 4
-2 5
-3 4
-4 5
+r s t u v w y x
+r v
+v r
+r s
+s r
+s w
+w s
+w t
+t w
+t u
+u t
+x y
+y x
+y u
+u y
+u x
+x u
+t y
+y t
+w y
+y w
