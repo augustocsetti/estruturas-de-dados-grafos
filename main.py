@@ -4,16 +4,13 @@
     Murilo Vitória da Silva - Matrícula 124816
 
 QUESTÕES
-- Precisamos implementar usando a matriz também? Ou só mostrar está ok?
 - Criar classes específicas para buscas? Graph está ficando muito grande.
-- Como mostrar o resultado do algoritmo de busca por largura
-- Melhorar mostra informações com busca por profundidade
+- Melhorar mostra informações com busca por profundidade e largura
 - Aconteceu um erro quando estava testando várias maneiras de busca por largura
 uma erro de char~int com uma lista. Testar!
 
 FALTA
 - Implementar um grafo usando a representação de matriz de adjacência.
-- Método para mudar a definição do grafo (orientado <-> não orientado)
 - Implmentar os algoritmos Prim e Kruskal
 '''
 
@@ -45,17 +42,19 @@ class Graph():  # classe para o grafo e seus métodos
     def __init__(self, nodes='', edges=''):
 
         self.nodes = []
-        # percorre os nodos e encontra os que ele tem conexão (já direcionado)
+        # percorre os nodos e encontra os que ele tem conexão
         for node in nodes:
-            edgeReal = []
-            edgeNotReal = []
+            tempD = []
+            tempND = []
             for edge in edges:
+                # descreve relação para direcionado ou não direcionado
                 if edge[0] == node:
-                    edgeReal.append(edge[1])
-                    edgeNotReal.append(edge[1])
+                    tempD.append(edge[1])
+                    tempND.append(edge[1])
                 if edge[1] == node:
-                    edgeNotReal.append(edge[0])
-            self.nodes.append(Node(node, edgeReal, edgeNotReal))
+                    tempND.append(edge[0])
+            # cria nodo e adiciona a lista de nodos
+            self.nodes.append(Node(node, tempD, tempND))
         self.directed = True
 
     # método para inserir um novo nodo a um grafo já existente
@@ -103,18 +102,11 @@ class Graph():  # classe para o grafo e seus métodos
 
         edge = edge.split(" ")
         
-        self.exitNodeIndex = -1
-        self.entryNodeIndex = -1
-
         # procura pelos índices dos nodos
-        for i in range(len(self.nodes)):
-            if self.nodes[i].label == edge[0]:
-                self.exitNodeIndex = i
-
-            if self.nodes[i].label == edge[1]:
-                self.entryNodeIndex = i
+        self.exitNodeIndex = self.index(edge[0])
+        self.entryNodeIndex = self.index(edge[1])
         
-        # se um deles não existirem mostra mensamge de erro e so método
+        # se um deles não existir mostra mensagem de erro
         if self.entryNodeIndex == -1 or self.exitNodeIndex == -1:
             print('\nERRO! Um dos nodos não existe.\n')
             return
@@ -143,16 +135,16 @@ class Graph():  # classe para o grafo e seus métodos
         # percorre os nodos
         for i in range(len(self.nodes)):
 
-            # LISTA NÃO DIRECIONADA
+            # percorre nodos e busca índice duplicado (para não direcionado)
             for j in range(len(self.nodes)):
                 if self.nodes[j].label == edge:
                     self.index = j
                     break
 
+            # remove nodo duplicado para grafo não direcionado
             if self.index != -1:
                 print()
-                self.nodes[self.index].edgesND.remove(label)
-            # / LISTA NÃO DIRECIONADA        
+                self.nodes[self.index].edgesND.remove(label)   
             
             # busca label em nodos
             if self.nodes[i].label == label:
@@ -224,40 +216,34 @@ class Graph():  # classe para o grafo e seus métodos
         print()
 
     # mostra o grau do nodo
-    def grade(self, node):        
-        self.index = -1
-
-        # procura o índice do nodo
-        for i in range(len(self.nodes)):
-            if node == self.nodes[i].label:
-                self.index = i
-                break
+    def grade(self, label):        
+        self.indexTemp = self.index(label)
 
         # caso o índide seja -1 é porque o nodo informado não está na lista - volta para main()
-        if self.index == -1:
+        if self.indexTemp == None:
             print('\nERRO! O nodo não existe.\n')
             return
         else:
             # o grau de saída é o tamanho da varíavel que controla as arestas do nodo
             if self.directed:
-                self.exit = len(self.nodes[self.index].edgesD)
+                self.exit = len(self.nodes[self.indexTemp].edgesD)
                 self.entry = 0
                 
                 # para o grau de entrada é necessário percorrer todos os nodos
                 # veriicando a ocorrência do nodo informado nas arestas dos outros nodos
                 for i in range(len(self.nodes)):
-                    if node in self.nodes[i].edgesD:
+                    if label in self.nodes[i].edgesD:
                         self.entry += 1            
                 
                 # salvando informação de grau na classe nodo
-                self.nodes[self.index].gradeIn = self.entry
-                self.nodes[self.index].gradeOut = self.exit
+                self.nodes[self.indexTemp].gradeIn = self.entry
+                self.nodes[self.indexTemp].gradeOut = self.exit
             else:
-                self.exit = len(self.nodes[self.index].edgesND)
-                self.entry = len(self.nodes[self.index].edgesND)
+                self.exit = len(self.nodes[self.indexTemp].edgesND)
+                self.entry = len(self.nodes[self.indexTemp].edgesND)
 
-            print(f'\nGrau de entrada do nodo {node}: {self.entry}')
-            print(f'Grau de saída do nodo {node}: {self.exit}\n')
+            print(f'\nGrau de entrada do nodo {label}: {self.entry}')
+            print(f'Grau de saída do nodo {label}: {self.exit}\n')
 
     # mostra a matriz de adjacência do grafo
     def adjacencyMatrix(self):
@@ -287,7 +273,6 @@ class Graph():  # classe para o grafo e seus métodos
             print()
         print()
 
-    #ATENÇÃO! FAZER
     # método para mudar a definição do grafo 
     def guidance(self):        
         self.directed = not self.directed
