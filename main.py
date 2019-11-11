@@ -400,7 +400,7 @@ def main():
     # cria o objeto passando como parâmetro os nodos e arestas
     g = Graph(nodes, edges)
 
-
+    
     # loop principal
     op = -1
     while op != 0:
