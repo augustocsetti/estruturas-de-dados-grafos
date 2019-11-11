@@ -130,17 +130,15 @@ class Graph():  # classe para o grafo e seus métodos
 
     # remove arestas
     def remove(self, edge):
-        # verifica se existem arestas no grafo e
-        # se a aresta informada existe no grafo
+        # verifica se o nodo não está vazio
         if len(self.nodes) == 0:
             print('\nERRO! Não existem nodos no grafo.\n')
             return
+            
         # trata entrada
         edge = edge.split(" ")
         label, edge = edge[0], edge[1]
-        self.index = -1
-
-        
+        self.index = -1        
 
         # percorre os nodos
         for i in range(len(self.nodes)):
@@ -241,18 +239,22 @@ class Graph():  # classe para o grafo e seus métodos
             return
         else:
             # o grau de saída é o tamanho da varíavel que controla as arestas do nodo
-            self.exit = len(self.nodes[self.index].edgesD)
-            self.entry = 0
-            
-            # para o grau de entrada é necessário percorrer todos os nodos
-            # veriicando a ocorrência do nodo informado nas arestas dos outros nodos
-            for i in range(len(self.nodes)):
-                if node in self.nodes[i].edgesD:
-                    self.entry += 1            
-            
-            # salvando informação de grau na classe nodo
-            self.nodes[self.index].gradeIn = self.entry
-            self.nodes[self.index].gradeOut = self.exit
+            if self.directed:
+                self.exit = len(self.nodes[self.index].edgesD)
+                self.entry = 0
+                
+                # para o grau de entrada é necessário percorrer todos os nodos
+                # veriicando a ocorrência do nodo informado nas arestas dos outros nodos
+                for i in range(len(self.nodes)):
+                    if node in self.nodes[i].edgesD:
+                        self.entry += 1            
+                
+                # salvando informação de grau na classe nodo
+                self.nodes[self.index].gradeIn = self.entry
+                self.nodes[self.index].gradeOut = self.exit
+            else:
+                self.exit = len(self.nodes[self.index].edgesND)
+                self.entry = len(self.nodes[self.index].edgesND)
 
             print(f'\nGrau de entrada do nodo {node}: {self.entry}')
             print(f'Grau de saída do nodo {node}: {self.exit}\n')
