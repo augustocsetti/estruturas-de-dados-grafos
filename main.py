@@ -13,8 +13,7 @@ QUESTÕES
 uma erro de char~int com uma lista. Testar!
 
 FALTA
-- O método identify parece ter um bug: quando um nodo não tem ou recebe aresta,
-  ele classifica como fonte e sumidouro. A parte da fonte parece estar errada
+
 - Implementar os algoritmos Prim e Kruskal
 - Implementar os algoritmos Dijkstra
 - Implementar os algoritmos Bellman-Ford
@@ -132,7 +131,7 @@ class Graph():  # classe para o grafo e seus métodos
 
     # remove arestas
     def remove(self, edge):
-        # verifica se o nodo não está vazio
+        # verifica se o grafo não está vazio
         if len(self.nodes) == 0:
             print('\nERRO! Não existem nodos no grafo.\n')
             return
@@ -140,32 +139,29 @@ class Graph():  # classe para o grafo e seus métodos
         # trata entrada
         edge = edge.split(" ")
         label, edge = edge[0], edge[1]
-        self.indice = -1        
+
+        self.indLabel = self.index(label)
+        self.indEdge = self.index(edge)
+
+        if self.indLabel == -1 or self.indEdge == -1:
+            print('\nERRO! Um dos nodos não não existe.\n')
+            return              
 
         # percorre os nodos
         for i in range(len(self.nodes)):
 
-            # percorre nodos e busca índice duplicado (para não direcionado)
-            for j in range(len(self.nodes)):
-                if self.nodes[j].label == edge:
-                    self.indice = j
-                    break
-
-            # remove nodo duplicado para grafo não direcionado
-            if self.indice != -1:
-                print()
-                self.nodes[self.indice].edgesND.remove(label)   
-            
             # busca label em nodos
-            if self.nodes[i].label == label:
-                try:
-                    self.nodes[i].edgesD.remove(edge)
-                    self.nodes[i].edgesND.remove(edge)
-                except:
-                    print('\nERRO! Aresta não exite.\n')
+            if self.nodes[i].label == label and edge in self.nodes[i].edgesD:                
+                self.nodes[i].edgesD.remove(edge)
+                self.nodes[i].edgesND.remove(edge)
+
+                # remoção do grado não direcionado
+                self.nodes[self.indEdge].edgesND.remove(label)
+
+                print('\nOperação bem sucedida.\n')           
                 return
-        # se o nodo não for encontrado
-        print('\nERRO! Nodo não existe.\n')
+        
+        print('\nERRO! A aresta não existe.\n')
         
     # mostra lista com os nodos e suas arestas
     def view(self):
@@ -176,13 +172,11 @@ class Graph():  # classe para o grafo e seus métodos
             if self.directed:
                 if self.nodes[i].edgesD:
                     for j in range(len(self.nodes[i].edgesD)):
-                        print(
-                            f'--> {self.nodes[i].edgesD[j]}', end='  ')
+                        print(f'--> {self.nodes[i].edgesD[j]}', end='  ')
             else:
                 if self.nodes[i].edgesND:
                     for j in range(len(self.nodes[i].edgesND)):
-                        print(
-                            f'--> {self.nodes[i].edgesND[j]}', end='  ')
+                        print(f'--> {self.nodes[i].edgesND[j]}', end='  ')
             print()
         print()
 
@@ -399,6 +393,9 @@ class Graph():  # classe para o grafo e seus métodos
         for i in range(len(self.nodes)):
             if self.nodes[i].label == str(label):
                 return i
+        
+        # caso não encontre o elemento procurado
+        return -1
                 
               
 def readFile(): # função para receber entrada do arquivo
@@ -464,8 +461,7 @@ def main():
             elif op == 5:
                 g.insert(input('Informe a aresta a ser incluída ([nodo1] [nodo2]): '))
             elif op == 6:
-                g.remove(input('Informe a aresta a ser excluída ([nodo1] [nodo2]): '))
-                print()
+                x = g.remove(input('Informe a aresta a ser excluída ([nodo1] [nodo2]): '))
             elif op == 7:
                 g.grade(input('Informe o nodo: '))
             elif op == 8:
@@ -489,6 +485,7 @@ def main():
                 print('\nERRO! Favor informar um valor entre 0 e 14.\n')
 
         except ValueError:
+            print('ok')
             print('\nFavor informar um valor válido.\n')
         
 
