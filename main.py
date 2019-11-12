@@ -13,8 +13,11 @@ QUESTÕES
 uma erro de char~int com uma lista. Testar!
 
 FALTA
-- Implementar um grafo usando a representação de matriz de adjacência.
-- Implmentar os algoritmos Prim e Kruskal
+- O método identify parece ter um bug: quando um nodo não tem ou recebe aresta,
+  ele classifica como fonte e sumidouro. A parte da fonte parece estar errada
+- Implementar os algoritmos Prim e Kruskal
+- Implementar os algoritmos Dijkstra
+- Implementar os algoritmos Bellman-Ford
 '''
 
 # bibliotecas utilizdas para redirecionar o output (print) do método grade
@@ -137,7 +140,7 @@ class Graph():  # classe para o grafo e seus métodos
         # trata entrada
         edge = edge.split(" ")
         label, edge = edge[0], edge[1]
-        self.index = -1        
+        self.indice = -1        
 
         # percorre os nodos
         for i in range(len(self.nodes)):
@@ -145,13 +148,13 @@ class Graph():  # classe para o grafo e seus métodos
             # percorre nodos e busca índice duplicado (para não direcionado)
             for j in range(len(self.nodes)):
                 if self.nodes[j].label == edge:
-                    self.index = j
+                    self.indice = j
                     break
 
             # remove nodo duplicado para grafo não direcionado
-            if self.index != -1:
+            if self.indice != -1:
                 print()
-                self.nodes[self.index].edgesND.remove(label)   
+                self.nodes[self.indice].edgesND.remove(label)   
             
             # busca label em nodos
             if self.nodes[i].label == label:
@@ -166,6 +169,7 @@ class Graph():  # classe para o grafo e seus métodos
         
     # mostra lista com os nodos e suas arestas
     def view(self):
+        print()
         for i in range(len(self.nodes)):
             print(f'{self.nodes[i].label}: ', end='')
 
@@ -195,10 +199,13 @@ class Graph():  # classe para o grafo e seus métodos
             # chamamos o método grade para identificar os graus do nodo
             self.grade(self.nodes[i].label)
             # checa-se condição de fonte e sumidouro
-            if self.nodes[i].gradeIn == 0:
-                self.source.append(self.nodes[i].label)
-            if self.nodes[i].gradeOut == 0:
-                self.sink.append(self.nodes[i].label)
+            if  self.nodes[i].gradeIn == 0 and self.nodes[i].gradeOut == 0:
+                continue
+            else:
+                if self.nodes[i].gradeIn == 0:
+                    self.source.append(self.nodes[i].label)
+                if self.nodes[i].gradeOut == 0:
+                    self.sink.append(self.nodes[i].label)
 
         sys.stdout = sys.__stdout__
 
@@ -224,9 +231,7 @@ class Graph():  # classe para o grafo e seus métodos
 
     # mostra o grau do nodo
     def grade(self, label):        
-        self.indexTemp = self.index(label)
-
-        # caso o índide seja -1 é porque o nodo informado não está na lista - volta para main()
+        self.indexTemp = self.index(label)        
 
         if self.indexTemp == None:
             print('\nERRO! O nodo não existe.\n')
@@ -241,20 +246,22 @@ class Graph():  # classe para o grafo e seus métodos
                 # veriicando a ocorrência do nodo informado nas arestas dos outros nodos
                 for i in range(len(self.nodes)):
                     if label in self.nodes[i].edgesD:
-                        self.entry += 1            
-                
-                # salvando informação de grau na classe nodo
-                self.nodes[self.indexTemp].gradeIn = self.entry
-                self.nodes[self.indexTemp].gradeOut = self.exit
+                        self.entry += 1
             else:
                 self.exit = len(self.nodes[self.indexTemp].edgesND)
                 self.entry = len(self.nodes[self.indexTemp].edgesND)
+            
+            # salvando informação de grau na classe nodo
+            self.nodes[self.indexTemp].gradeIn = self.entry
+            self.nodes[self.indexTemp].gradeOut = self.exit
 
             print(f'\nGrau de entrada do nodo {label}: {self.entry}')
             print(f'Grau de saída do nodo {label}: {self.exit}\n')
 
     # mostra a matriz de adjacência do grafo
     def adjacencyMatrix(self):
+        print()
+
         # mostra os nodos na horizontal - primeira linha
         print('     ', end='')
         for i in range(len(self.nodes)):
@@ -285,7 +292,12 @@ class Graph():  # classe para o grafo e seus métodos
     # método para mudar a definição do grafo 
     def guidance(self):        
         self.directed = not self.directed
-        print('\nOperação bem sucedida.\n')
+
+        if self.directed:
+            print('\nGrafo orientado.\n')
+        else:
+            print('\nGrafo não orientado.\n')
+        
 
     #ATENÇÃO! CASO COM ERRO
     # algoritmo de busca em largura BFS
@@ -364,24 +376,30 @@ class Graph():  # classe para o grafo e seus métodos
     # printa informações de cada nodo pós busca por profundidade
     def infosDepthSearch(self):
         for elem in self.nodes:
-            print('label ',elem.label)
-            print('pai ',elem.father)
-            print('tempo ',elem.time)
-            print('cor', elem.set)
+            print(f'label: {elem.label}')
+            print(f'pai {elem.father}')
+            print(f'tempo {elem.time}')
+            print(f'cor {elem.set}')
             print()
+    
+    def prim(self):
+        print('\nYou wish...\n')
+
+    def kruskal(self):
+        print('\nYou wish...\n')
+
+    def dijkstra(self):
+        print('\nYou wish...\n')
+
+    def bellmanFord(self):
+        print('\nYou wish...\n')
 
     # retorna índice (da lista self.grafos) de algum nodo
     def index(self, label):
         for i in range(len(self.nodes)):
             if self.nodes[i].label == str(label):
                 return i
-
-    # retorna índice (da lista self.grafos) de algum nodo
-    def index(self, label):
-        for i in range(len(self.nodes)):
-            if self.nodes[i].label == str(label):
-                return i
-
+                
               
 def readFile(): # função para receber entrada do arquivo
     with open('entrada.txt') as file:
@@ -394,20 +412,17 @@ def readFile(): # função para receber entrada do arquivo
 
 
 def menu(): # menu do programa
-    print('===============Opções===============')
-    print('1 - Mostrar lista de adjacências')
-    print('2 - Mostrar matriz de adjacências')
-    print('3 - Inserir um nodo')
-    print('4 - Remover um nodo')
-    print('5 - Inserir uma aresta')
-    print('6 - Remover uma aresta')
-    print('7 - Informar o grau de um nodo')
-    print('8 - Informar fontes e sumidouros do grafo')
-    print('9 - Não-orientado -> orientado (e vice-versa)')
-    print('10 - Breadth First Search')
-    print('11 - Depth First Search')
-    print('0 = Encerra o programa')
-    print('====================================')
+    print('==================================Opções==================================')
+    print('1 - Mostrar lista de adjacências   ---   2 - Mostrar matriz de adjacências')
+    print('3 - Inserir um nodo                ---   4 - Remover um nodo')
+    print('5 - Inserir uma aresta             ---   6 - Remover uma aresta')
+    print('7 - Informar o grau de um nodo     ---   8 - Fontes e sumidouros do grafo')
+    print('9 - Muda direcionamento do grafo   ---   10 - Breadth First Search')
+    print('11 - Depth First Search            ---   12 - Prim')
+    print('13 - Kruskal                       ---   14 - Dijkstra  ')
+    print('15 - Bellman-Ford')
+    print('0 - Encerra o programa')
+    print('===========================================================================')
     option = input('Opção: ')
 
     return option
@@ -461,9 +476,17 @@ def main():
                 g.breadthSearch(input('Informe o nodo para iniciar a busca: '))
             elif op == 11:
                 g.depthSearch()
-                g.infosDepthSearch()                
-            elif op < 0 or op > 11:
-                print('\nERRO! Favor informar um valor entre 0 e 11.\n')
+                g.infosDepthSearch()
+            elif op == 12:                
+                g.prim()
+            elif op == 13:                
+                g.kruskal()
+            elif op == 14:
+                g.dijkstra()
+            elif op == 15:
+                g.bellmanFord()
+            elif op < 0 or op > 15:
+                print('\nERRO! Favor informar um valor entre 0 e 14.\n')
 
         except ValueError:
             print('\nFavor informar um valor válido.\n')
