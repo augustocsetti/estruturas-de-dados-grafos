@@ -39,8 +39,8 @@ def menu(): # menu do programa
     print('7 - Informar o grau de um nodo     ---   8 - Fontes e sumidouros do grafo')
     print('9 - Muda direcionamento do grafo   ---   10 - Breadth First Search')
     print('11 - Depth First Search            ---   12 - Prim')
-    print('13 - Kruskal                       ---   14 - Dijkstra  ')
-    print('15 - Bellman-Ford')
+    print('13 - Kruskal                       ---   14 - Dijkstra')
+    print('15 - Bellman-Ford                  ---   16 - Arestas com pesos')
     print('0 - Encerra o programa')
     print('===========================================================================')
     option = input('Opção: ')
@@ -57,11 +57,14 @@ def main():
 
     # as linhas seguintes são as arestas
     edges = []
+    edgesW = []
+
     for linha in data[1:]:
         edges.append([linha[0], linha[1]])
+        edgesW.append([linha[0], linha[1], linha[2]])
 
     # cria o objeto passando como parâmetro os nodos e arestas
-    g = Graph(nodes, edges)
+    g = Graph(nodes, edges, edgesW)
     
     # loop principal
     op = -1
@@ -101,7 +104,9 @@ def main():
                 g.dijkstra()
             elif op == 15:
                 g.bellmanFord()
-            elif op < 0 or op > 15:
+            elif op == 16:
+                g.view2()
+            elif op < 0 or op > 16:
                 print('\nERRO! Favor informar um valor entre 0 e 15.\n')
 
         except ValueError:

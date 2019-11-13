@@ -10,24 +10,35 @@ BLACK = 2
 
 class Graph():  # classe para o grafo e seus métodos
 
-    def __init__(self, nodes='', edges=''):
+    def __init__(self, nodes='', edges='', edgesW=[]):
 
         self.nodes = []
+        self.directed = True
+
         # percorre os nodos e encontra os que ele tem conexão
         for node in nodes:
             tempD = []
             tempND = []
+            tempW = []
+
             for edge in edges:
+                
                 # descreve relação para direcionado ou não direcionado
                 if edge[0] == node:
                     tempD.append(edge[1])
                     tempND.append(edge[1])
+                
                 if edge[1] == node:
                     tempND.append(edge[0])
-            # cria nodo e adiciona a lista de nodos
-            self.nodes.append(Node(node, tempD, tempND))
 
-        self.directed = True
+            for edgeW in edgesW:
+                if edgeW[0] == node:
+                    tempW.append([edgeW[1], edgeW[2]])
+                    
+            # cria nodo e adiciona a lista de nodos
+            self.nodes.append(Node(node, tempD, tempND, tempW))
+
+        
 
     # método para inserir um novo nodo a um grafo já existente
     def push(self, label):
@@ -361,3 +372,15 @@ class Graph():  # classe para o grafo e seus métodos
         
         # caso não encontre o elemento procurado
         return -1
+
+    # ver ligação dos nodos e o peso destas ligações
+    def view2(self):
+        print()
+        for i in range(len(self.nodes)):
+            print(f'{self.nodes[i].label}: ', end='')
+            if self.nodes[i].edgesWH:                
+                for j in range(len(self.nodes[i].edgesWH)):
+                    print(f'{self.nodes[i].edgesWH[j]} ', end='  ')
+
+            print()
+        print()
