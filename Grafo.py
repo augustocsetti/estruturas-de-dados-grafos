@@ -352,8 +352,52 @@ class Graph():  # classe para o grafo e seus métodos
             print(f'cor {elem.set}')
             print()
     
-    def prim(self):
-        print('\nYou wish...\n')
+    def prim(self, label):
+        self.nodo = label
+        self.indice = self.index(self.nodo)
+
+        # procura o nodo informado e verifica se ele existe no grafo
+        # guarda o indíce do nodo na lista
+        for i in range(len(self.nodes)):
+            if self.nodo == self.nodes[i].label:
+                self.indice = i
+
+        if self.indice == -1:
+            print('\nERRO! Este nodo não existe.\n')
+            return
+        
+        # a chave do nodo de partida é sempre 0
+        self.nodes[self.indice].key = 0
+
+        # guarda todos os nodos ainda não verificados
+        self.queue = self.nodes.copy()
+        self.minEdge = ''
+        self.minWeight = float('inf')    
+
+        while len(self.queue) > 0:
+
+            tmp = self.indice
+            self.queue.remove(self.nodes[tmp])           
+            
+
+            for edgeW in self.nodes[tmp].edgesWH:
+                print(edgeW)               
+
+                if int(edgeW[1]) < self.minWeight:
+                    self.minEdge = edgeW[0]
+                    self.minWeight = int(edgeW[1])
+
+                    # pega o índice do nodo com aresta de menor peso
+                    self.indice = self.index(self.minEdge)
+                    print(self.indice)
+
+                    # acessamos o nodo na posição encontrada e setamos o pai e o valor da chave (peso da aresta)
+                    self.nodes[self.indice].parent = self.nodo
+                    self.nodes[self.indice].key = self.minWeight
+            
+            
+           
+
 
     def kruskal(self):
         print('\nYou wish...\n')

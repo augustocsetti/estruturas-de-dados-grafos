@@ -97,7 +97,7 @@ def main():
                 g.depthSearch()
                 g.infosDepthSearch()
             elif op == 12:                
-                g.prim()
+                g.prim(input('Informe o nodo de partida: '))
             elif op == 13:                
                 g.kruskal()
             elif op == 14:
@@ -107,7 +107,7 @@ def main():
             elif op == 16:
                 g.view2()
             elif op < 0 or op > 16:
-                print('\nERRO! Favor informar um valor entre 0 e 15.\n')
+                print('\nERRO! Favor informar um valor entre 0 e 16.\n')
 
         except ValueError:
             print('\nFavor informar um valor válido.\n')
