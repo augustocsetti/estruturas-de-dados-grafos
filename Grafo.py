@@ -2,6 +2,7 @@
 import sys, os
 from Node import *
 
+
 # definição de estados para busca em profundidade
 WHITE = 0
 GRAY = 1
@@ -34,7 +35,8 @@ class Graph():  # classe para o grafo e seus métodos
             for edgeW in edgesW:
                 if edgeW[0] == node:
                     tempW.append([edgeW[1], edgeW[2]])
-                    
+                '''if edgeW[1] == node:
+                    tempW.append([edgeW[0], edgeW[2]])'''
             # cria nodo e adiciona a lista de nodos
             self.nodes.append(Node(node, tempD, tempND, tempW))
 
@@ -356,48 +358,44 @@ class Graph():  # classe para o grafo e seus métodos
         self.nodo = label
         self.indice = self.index(self.nodo)
 
-        # procura o nodo informado e verifica se ele existe no grafo
-        # guarda o indíce do nodo na lista
-        for i in range(len(self.nodes)):
-            if self.nodo == self.nodes[i].label:
-                self.indice = i
-
         if self.indice == -1:
             print('\nERRO! Este nodo não existe.\n')
             return
         
         # a chave do nodo de partida é sempre 0
         self.nodes[self.indice].key = 0
+        self.firstRun = True
+        tmp = 0
 
-        # guarda todos os nodos ainda não verificados
-        self.queue = self.nodes.copy()
-        self.minEdge = ''
-        self.minWeight = float('inf')    
+        self.size = len(self.nodes)            
+                   
+        while self.size > 0:
 
-        while len(self.queue) > 0:
-
-            tmp = self.indice
-            self.queue.remove(self.nodes[tmp])           
+            self.size -= 1
             
+            self.pai = self.nodes[tmp].label            
 
             for edgeW in self.nodes[tmp].edgesWH:
-                print(edgeW)               
-
-                if int(edgeW[1]) < self.minWeight:
-                    self.minEdge = edgeW[0]
-                    self.minWeight = int(edgeW[1])
-
-                    # pega o índice do nodo com aresta de menor peso
-                    self.indice = self.index(self.minEdge)
-                    print(self.indice)
-
+                print(edgeW[0])
+                indice = self.index(edgeW[0])
+                print(indice)                
+                                
+                if int(edgeW[1]) < self.nodes[indice].key:
                     # acessamos o nodo na posição encontrada e setamos o pai e o valor da chave (peso da aresta)
-                    self.nodes[self.indice].parent = self.nodo
-                    self.nodes[self.indice].key = self.minWeight
+                    self.nodes[indice].parent = self.pai
+                    self.nodes[indice].key = int(edgeW[1])
             
-            
-           
+            #print('saiu')
+            self.firstRun = False
+            tmp = self.extractMin()
+            print(f'temp = {tmp}')
+            '''print('run')
+            for i in range(len(self.nodes)):
+                print(self.nodes[i].key)'''
 
+        for i in range(len(self.nodes)):
+            print(self.nodes[i].parent)
+            print(self.nodes[i].key)
 
     def kruskal(self):
         print('\nYou wish...\n')
@@ -428,3 +426,18 @@ class Graph():  # classe para o grafo e seus métodos
 
             print()
         print()
+
+    # método auxiliar para Prim
+    def extractMin(self):
+
+        self.huh = -1
+        self.menor = float('inf')
+
+        for node in self.nodes:
+            #print(node.key)
+            if node.key < self.menor and node.key > 0:                
+                self.menor = node.key
+                self.huh = self.index(node.label)
+                #print(f'self.huh = {self.huh}')
+
+        return self.huh
