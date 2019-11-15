@@ -97,7 +97,7 @@ def main():
                 g.depthSearch()
                 g.infosDepthSearch()
             elif op == 12:                
-                g.prim(input('Informe o nodo de partida: '))
+                g.prim()
             elif op == 13:                
                 g.kruskal()
             elif op == 14:
