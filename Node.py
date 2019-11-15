@@ -16,3 +16,4 @@ class Node():  # classe para os nodos e suas características
         # Prim
         self.parent = None
         self.key = float('inf')
+        self.done = False

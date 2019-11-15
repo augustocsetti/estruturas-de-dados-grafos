@@ -35,8 +35,8 @@ class Graph():  # classe para o grafo e seus métodos
             for edgeW in edgesW:
                 if edgeW[0] == node:
                     tempW.append([edgeW[1], edgeW[2]])
-                '''if edgeW[1] == node:
-                    tempW.append([edgeW[0], edgeW[2]])'''
+                if edgeW[1] == node:
+                    tempW.append([edgeW[0], edgeW[2]])
             # cria nodo e adiciona a lista de nodos
             self.nodes.append(Node(node, tempD, tempND, tempW))
 
@@ -364,7 +364,7 @@ class Graph():  # classe para o grafo e seus métodos
         
         # a chave do nodo de partida é sempre 0
         self.nodes[self.indice].key = 0
-        self.firstRun = True
+        # self.firstRun = True
         tmp = 0
 
         self.size = len(self.nodes)            
@@ -375,27 +375,21 @@ class Graph():  # classe para o grafo e seus métodos
             
             self.pai = self.nodes[tmp].label            
 
-            for edgeW in self.nodes[tmp].edgesWH:
-                print(edgeW[0])
+            for edgeW in self.nodes[tmp].edgesWH:                
                 indice = self.index(edgeW[0])
-                print(indice)                
                                 
                 if int(edgeW[1]) < self.nodes[indice].key:
                     # acessamos o nodo na posição encontrada e setamos o pai e o valor da chave (peso da aresta)
                     self.nodes[indice].parent = self.pai
                     self.nodes[indice].key = int(edgeW[1])
             
-            #print('saiu')
-            self.firstRun = False
+            self.nodes[tmp].done = True            
             tmp = self.extractMin()
-            print(f'temp = {tmp}')
-            '''print('run')
-            for i in range(len(self.nodes)):
-                print(self.nodes[i].key)'''
 
         for i in range(len(self.nodes)):
-            print(self.nodes[i].parent)
-            print(self.nodes[i].key)
+            print(f'Nodo = {self.nodes[i].label}')
+            print(f'Pai = {self.nodes[i].parent}')
+            print(f'Chave = {self.nodes[i].key}')
 
     def kruskal(self):
         print('\nYou wish...\n')
@@ -428,16 +422,16 @@ class Graph():  # classe para o grafo e seus métodos
         print()
 
     # método auxiliar para Prim
+    # procura o nodo com a menor chave para continuar o algoritmo
     def extractMin(self):
 
-        self.huh = -1
-        self.menor = float('inf')
+        self.indexMenor = -1
+        self.menorChave = float('inf')
 
         for node in self.nodes:
-            #print(node.key)
-            if node.key < self.menor and node.key > 0:                
-                self.menor = node.key
-                self.huh = self.index(node.label)
-                #print(f'self.huh = {self.huh}')
 
-        return self.huh
+            if node.key < self.menorChave and not node.done:                
+                self.menorChave = node.key
+                self.indxMenor = self.index(node.label)                
+
+        return self.indxMenor
