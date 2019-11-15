@@ -1,5 +1,6 @@
 # bibliotecas utilizdas para redirecionar o output (print) do método grade
 import sys, os
+from operator import itemgetter
 from Node import *
 
 
@@ -20,7 +21,8 @@ class Graph():  # classe para o grafo e seus métodos
         for node in nodes:
             tempD = []
             tempND = []
-            tempW = []
+            tempWPrim = []
+            tempWKruskal = []
 
             for edge in edges:
                 
@@ -32,13 +34,18 @@ class Graph():  # classe para o grafo e seus métodos
                 if edge[1] == node:
                     tempND.append(edge[0])
 
+            # Prim
             for edgeW in edgesW:
                 if edgeW[0] == node:
-                    tempW.append([edgeW[1], edgeW[2]])
+                    tempWPrim.append([edgeW[1], edgeW[2]])
+                    tempWKruskal.append([edgeW[0], edgeW[1], edgeW[2]])
                 if edgeW[1] == node:
-                    tempW.append([edgeW[0], edgeW[2]])
+                    tempWPrim.append([edgeW[0], edgeW[2]])
+
+            # Kruskal
+
             # cria nodo e adiciona a lista de nodos
-            self.nodes.append(Node(node, tempD, tempND, tempW))
+            self.nodes.append(Node(node, tempD, tempND, tempWPrim, tempWKruskal))
 
         
 
@@ -354,8 +361,9 @@ class Graph():  # classe para o grafo e seus métodos
             print(f'cor {elem.set}')
             print()
     
+    # algoritmo que procura o menor caminho entre os nodos de um grafo
     def prim(self):        
-        self.indice = 0        
+        self.indice = 0
         
         # a chave do nodo de partida é sempre 0
         self.nodes[self.indice].key = 0  
@@ -393,6 +401,12 @@ class Graph():  # classe para o grafo e seus métodos
             print(f'Chave = {self.nodes[i].key}')
             print()
 
+        # resetando os valores dos atributos
+        for i in range(len(self.nodes)):
+            self.nodes[i].parent = None
+            self.nodes[i].key = float('inf')
+            self.nodes[i].done = False
+
     # método auxiliar para Prim
     def extractMin(self):
 
@@ -408,8 +422,45 @@ class Graph():  # classe para o grafo e seus métodos
         return self.indiceMenor
 
 
+    # algortimo que procura o menor caminho entre os nodos de um grafo
+    # vai formando árvores (neste caso, pares de nodos) até terminar (aceita grafos desconexos)
     def kruskal(self):
-        print('\nYou wish...\n')
+
+        # resetando os valores do atributo pai - ele vai evitar que o grafo fique um ciclo
+        for i in range(len(self.nodes)):
+            self.nodes[i].parent = None            
+
+        # listas auxiliares para guardar as listas em ordem de peso e o resultado final, respectivamente
+        self.ordenadas = []
+        self.minimum = []
+
+        # guardamos todas as arestas
+        for i in range(len(self.nodes)):
+            for edge in self.nodes[i].edgesKruskal:
+                self.ordenadas.append(edge)
+
+        # e as ordenamos por peso
+        self.ordenadas = sorted(self.ordenadas, key=itemgetter(2))
+
+        # percorremos as arestas ordenadas e utilizamos o índice do primeiro elemento
+        for edge in self.ordenadas:
+            self.indice = self.index(edge[0])
+            
+            # percorrendo todas as arestas no índice encontrado
+            for edgesK in self.nodes[self.indice].edgesKruskal:
+
+                # agora pegamos o índice no segundo elemento da aresta para verificar se ele já tem pai
+                # caso não tenha ela será definido - isto evita que o grafo fique um ciclo
+                edgeIndex = self.index(edgesK[1])
+
+              
+                if self.nodes[edgeIndex].parent == None:
+                    self.nodes[edgeIndex].parent = edgesK[0]
+                    self.minimum.append(edgesK)
+
+        print(self.minimum)
+        
+
 
     def dijkstra(self):
         print('\nYou wish...\n')
