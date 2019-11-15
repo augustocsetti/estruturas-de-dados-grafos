@@ -2,6 +2,7 @@
 import sys, os
 from Node import *
 
+
 # definição de estados para busca em profundidade
 WHITE = 0
 GRAY = 1
@@ -34,7 +35,8 @@ class Graph():  # classe para o grafo e seus métodos
             for edgeW in edgesW:
                 if edgeW[0] == node:
                     tempW.append([edgeW[1], edgeW[2]])
-                    
+                if edgeW[1] == node:
+                    tempW.append([edgeW[0], edgeW[2]])
             # cria nodo e adiciona a lista de nodos
             self.nodes.append(Node(node, tempD, tempND, tempW))
 
@@ -352,8 +354,59 @@ class Graph():  # classe para o grafo e seus métodos
             print(f'cor {elem.set}')
             print()
     
-    def prim(self):
-        print('\nYou wish...\n')
+    def prim(self):        
+        self.indice = 0        
+        
+        # a chave do nodo de partida é sempre 0
+        self.nodes[self.indice].key = 0  
+        
+        # lista auxiliar para garantir que não haverá desconexão entre os nodos
+        self.minPath = []
+        self.size = len(self.nodes)            
+                   
+        while self.size > 0:
+
+            self.size -= 1
+            
+            self.pai = self.nodes[self.indice].label
+
+            if self.pai not in self.minPath:
+                self.minPath.append(self.pai)
+
+            for edgeW in self.nodes[self.indice].edgesWH:
+
+                edgeIndex = self.index(edgeW[0])
+                print(f'pai = {self.nodes[edgeIndex].parent}')
+                if int(edgeW[1]) < self.nodes[edgeIndex].key and self.nodes[edgeIndex].parent not in self.minPath:
+                    # acessamos o nodo na posição encontrada e setamos o pai e o valor da chave (peso da aresta)
+                    self.nodes[edgeIndex].parent = self.pai
+                    self.nodes[edgeIndex].key = int(edgeW[1])
+            
+            self.nodes[self.indice].done = True
+            self.indice = self.extractMin()
+           
+        # mostra o nodo, seu pai e o peso da ligação até este
+        # montando o grafo, nenhum nodo deve ficar desconectado
+        for i in range(len(self.nodes)):
+            print(f'Nodo = {self.nodes[i].label}')
+            print(f'Pai = {self.nodes[i].parent}')
+            print(f'Chave = {self.nodes[i].key}')
+            print()
+
+    # método auxiliar para Prim
+    def extractMin(self):
+
+        self.indiceMenor = -1
+        self.menor = float('inf')
+
+        for node in self.nodes:
+            
+            if node.key < self.menor and node.done == False:                
+                self.menor = node.key
+                self.indiceMenor = self.index(node.label)
+                
+        return self.indiceMenor
+
 
     def kruskal(self):
         print('\nYou wish...\n')

@@ -107,7 +107,7 @@ def main():
             elif op == 16:
                 g.view2()
             elif op < 0 or op > 16:
-                print('\nERRO! Favor informar um valor entre 0 e 15.\n')
+                print('\nERRO! Favor informar um valor entre 0 e 16.\n')
 
         except ValueError:
             print('\nFavor informar um valor válido.\n')

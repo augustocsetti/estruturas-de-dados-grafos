@@ -12,3 +12,8 @@ class Node():  # classe para os nodos e suas características
         self.set = False # usado para marcar nodo em buscas
         self.father = None # marcação do nodo pai na busca por profundidade
         self.time = [] # tempo de abertura e fechamento na busca por profundidade
+
+        # Prim
+        self.parent = None
+        self.key = float('inf')
+        self.done = False
