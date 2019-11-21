@@ -22,7 +22,7 @@ class Graph():  # classe para o grafo e seus métodos
             tempD = []
             tempND = []
             tempWPrim = []
-            tempWKruskal = []
+            tempComplete = [] # Kruskal, Dijkstra, Bellman-Ford
 
             for edge in edges:
                 
@@ -34,18 +34,16 @@ class Graph():  # classe para o grafo e seus métodos
                 if edge[1] == node:
                     tempND.append(edge[0])
 
-            # Prim
+            # Prim, Kruskal, Dijkstra, Bellman-Ford
             for edgeW in edgesW:
                 if edgeW[0] == node:
                     tempWPrim.append([edgeW[1], edgeW[2]])
-                    tempWKruskal.append([edgeW[0], edgeW[1], edgeW[2]])
+                    tempComplete.append([edgeW[0], edgeW[1], edgeW[2]])
                 if edgeW[1] == node:
                     tempWPrim.append([edgeW[0], edgeW[2]])
 
-            # Kruskal
-
             # cria nodo e adiciona a lista de nodos
-            self.nodes.append(Node(node, tempD, tempND, tempWPrim, tempWKruskal))
+            self.nodes.append(Node(node, tempD, tempND, tempWPrim, tempComplete))
 
         
 
@@ -362,7 +360,12 @@ class Graph():  # classe para o grafo e seus métodos
             print()
     
     # algoritmo que procura o menor caminho entre os nodos de um grafo
-    def prim(self):        
+    def prim(self):
+
+        # resetando os valores dos atributos dos nodos
+        self.nodeResetter() 
+
+        # variável do nodo inicial - escolhida arbitrariamente        
         self.indice = 0
         
         # a chave do nodo de partida é sempre 0
@@ -400,12 +403,7 @@ class Graph():  # classe para o grafo e seus métodos
             print(f'Pai = {self.nodes[i].parent}')
             print(f'Chave = {self.nodes[i].key}')
             print()
-
-        # resetando os valores dos atributos
-        for i in range(len(self.nodes)):
-            self.nodes[i].parent = None
-            self.nodes[i].key = float('inf')
-            self.nodes[i].done = False
+       
 
     # método auxiliar para Prim
     def extractMin(self):
@@ -422,13 +420,12 @@ class Graph():  # classe para o grafo e seus métodos
         return self.indiceMenor
 
 
-    # algortimo que procura o menor caminho entre os nodos de um grafo
-    # vai formando árvores (neste caso, pares de nodos) até terminar (aceita grafos desconexos)
+    # algoritmo que procura o menor caminho entre os nodos de um grafo
+    # vai formando árvores (neste caso, pares de nodos) até terminar
     def kruskal(self):
 
-        # resetando os valores do atributo pai - ele vai evitar que o grafo fique um ciclo
-        for i in range(len(self.nodes)):
-            self.nodes[i].parent = None            
+        # resetando os valores dos atributos dos nodos
+        self.nodeResetter() 
 
         # listas auxiliares para guardar as listas em ordem de peso e o resultado final, respectivamente
         self.ordenadas = []
@@ -436,7 +433,7 @@ class Graph():  # classe para o grafo e seus métodos
 
         # guardamos todas as arestas
         for i in range(len(self.nodes)):
-            for edge in self.nodes[i].edgesKruskal:
+            for edge in self.nodes[i].edgesComplete:
                 self.ordenadas.append(edge)
 
         # e as ordenamos por peso
@@ -447,12 +444,11 @@ class Graph():  # classe para o grafo e seus métodos
             self.indice = self.index(edge[0])
             
             # percorrendo todas as arestas no índice encontrado
-            for edgesK in self.nodes[self.indice].edgesKruskal:
+            for edgesK in self.nodes[self.indice].edgesComplete:
 
                 # agora pegamos o índice no segundo elemento da aresta para verificar se ele já tem pai
                 # caso não tenha ela será definido - isto evita que o grafo fique um ciclo
                 edgeIndex = self.index(edgesK[1])
-
               
                 if self.nodes[edgeIndex].parent == None:
                     self.nodes[edgeIndex].parent = edgesK[0]
@@ -463,10 +459,59 @@ class Graph():  # classe para o grafo e seus métodos
 
 
     def dijkstra(self):
-        print('\nYou wish...\n')
+        # resetando os valores dos atributos dos nodos
+        self.nodeResetter()
+
+        # indíce no nodo inicial - escolhido arbitrariamente
+        self.indice = 0
+        self.minimumIndex = self.indice
+        nodos = []     
+        self.distancia = 0         
+
+        for i in range(len(self.nodes)):
+            nodos.append(self.nodes[self.indice].label)
+
+            self.minimum = float('inf')
+
+            for edge in self.nodes[self.indice].edgesComplete:
+                print(edge)
+                # pegamos o índice da aresta ligada ao nodo
+                edgeIndex = self.index(edge[1])
+                
+                # caso este nodo ainda não tenha pai, configuramos o pai e a distância
+                if self.nodes[edgeIndex].parent == None:
+                    self.nodes[edgeIndex].parent = self.nodes[self.indice].label
+                    self.nodes[edgeIndex].distance = self.distancia + int(edge[2])
+                    
+                    # guardando os dados para a procura do próximo nodo
+                    if self.minimum > int(edge[2]):
+                        self.minimum = int(edge[2])
+                        self.minimumIndex = self.index(edge[1])
+                     
+            self.indice = self.minimumIndex
+            if self.minimum < float('inf'):
+                self.distancia += self.minimum
+
+
+        print(nodos)
+        print(self.distancia)
+           
+
+       
 
     def bellmanFord(self):
+        # resetando os valores dos atributos dos nodos
+        self.nodeResetter() 
         print('\nYou wish...\n')
+
+    # método auxiliar para resetar atributos dos nodos do grafo
+    def nodeResetter(self):
+        for i in range(len(self.nodes)):
+            self.nodes[i].parent = None
+            self.nodes[i].key = float('inf')
+            self.nodes[i].done = False
+            self.nodes[i].distance = float('inf')
+
 
     # retorna índice (da lista self.grafos) de algum nodo
     def index(self, label):
