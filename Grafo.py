@@ -92,22 +92,37 @@ class Graph():  # classe para o grafo e seus métodos
             return
 
         edge = edge.split(" ")
+        if len(edge) != 3:
+            print('\nERRO! Favor verificar os dados para a inserção de arestas: [nodo1] [nodo2] [peso]\n')
+            return
 
         # procura pelos índices dos nodos
         self.exitNodeIndex = self.index(edge[0])
         self.entryNodeIndex = self.index(edge[1])
+        self.edgeWeight = edge[2]
         
         # se um deles não existir mostra mensagem de erro
+        # -1 é o retorno da função que indica que o nodo em questão não foi encontrado
         if self.entryNodeIndex == -1 or self.exitNodeIndex == -1:
             print('\nERRO! Um dos nodos não existe.\n')
             return
 
         # veririca se a aresta já existe e, caso não exista, adicioná-las ao nodo
-
         if edge[1] not in self.nodes[self.exitNodeIndex].edgesD:
+                # grafo orientado - arestas sem peso
                 self.nodes[self.exitNodeIndex].edgesD.append(edge[1])
+                # grafo não orientado - arestas sem peso
                 self.nodes[self.exitNodeIndex].edgesND.append(edge[1])
                 self.nodes[self.entryNodeIndex].edgesND.append(edge[0])
+
+                # grafo orientado - completo [nodo1] [nodo2] [peso]
+                self.nodes[self.exitNodeIndex].edgesComplete.append(edge)
+
+                # grafo não orientado - [nodo2] [peso]
+                self.nodes[self.exitNodeIndex].edgesWH.append([edge[1], edge[2]])
+                self.nodes[self.entryNodeIndex].edgesWH.append([edge[0], edge[2]])
+
+                
                 print('\nOperação bem sucedida.\n')
         else:
             print('\nERRO! Esta aresta já existe.\n')
@@ -134,17 +149,31 @@ class Graph():  # classe para o grafo e seus métodos
         for i in range(len(self.nodes)):
 
             # busca label em nodos
-            if self.nodes[i].label == label and edge in self.nodes[i].edgesD:                
+            if self.nodes[i].label == label and edge in self.nodes[i].edgesD:
+                # remoção da aresta simples (sem peso) do grafo direcionado
                 self.nodes[i].edgesD.remove(edge)
                 self.nodes[i].edgesND.remove(edge)
+                # remoção da aresta simples (sem peso) do grafo não direcionado
+                self.nodes[self.indEdge].edgesND.remove(label) 
 
-                # remoção do grado não direcionado
-                self.nodes[self.indEdge].edgesND.remove(label)
+                # remoção da aresta na variável que contém a informação ['nodo2', 'peso']
+                for edges in self.nodes[i].edgesWH:                    
+                    if edges[0] == edge:           
+                        self.nodes[i].edgesWH.remove(edges)
+                        self.nodes[self.indEdge].edgesWH.remove([label, edges[1]]) 
+                        break 
 
+                # remoção da aresta na variável que contém a informação ['nodo1', 'nodo2', 'peso']
+                for edges in self.nodes[i].edgesComplete: 
+                    if edges[0] == label and edges[1] == edge:                        
+                        self.nodes[i].edgesComplete.remove(edges)                        
+                        break
+                
                 print('\nOperação bem sucedida.\n')           
-                return
-        
+                return           
+
         print('\nERRO! A aresta não existe.\n')
+
         
     # mostra lista com os nodos e suas arestas
     def view(self):
@@ -162,6 +191,7 @@ class Graph():  # classe para o grafo e seus métodos
                         print(f'--> {self.nodes[i].edgesND[j]}', end='  ')
             print()
         print()
+
 
     # identifica as fontes e sumidouros do grafo
     def identify(self):
@@ -457,55 +487,69 @@ class Graph():  # classe para o grafo e seus métodos
         print(self.minimum)
         
 
-
+    # https://www.youtube.com/watch?v=ovkITlgyJ2s&t=0s
     def dijkstra(self):
-        # resetando os valores dos atributos dos nodos
-        self.nodeResetter()
+        # o grafo deve ser direcionado!
+        if self.directed:
 
-        # indíce no nodo inicial - distância = zero
-        self.indice = 0
-        self.nodes[self.indice].distance = 0
-        self.nodes[self.indice].done = True
+            # veriricando se o grafo possui arestas com pesos negativos
+            # este algoritmo não funciona caso elas existam
+            for i in range(len(self.nodes)):
+                for edge in self.nodes[i].edgesComplete:
+                    if int(edge[2]) < 0:
+                        print('\nERRO! O grafo não pode possuir arestas com peso negativo.\n')
+                        return
+            
+            # resetando os valores dos atributos dos nodos
+            self.nodeResetter()
 
-        self.nodosAPercorrer = []
+            # indíce no nodo inicial - distância = zero
+            self.indice = 0
+            self.nodes[self.indice].distance = 0
+            self.nodes[self.indice].done = True
 
-        for i in range(len(self.nodes)):
-            if not self.nodes[i].done:
-                self.nodosAPercorrer.append(self.nodes[i])
+            self.nodosAPercorrer = []
 
-        while len(self.nodosAPercorrer) > 0:            
+            # adicionando os nodos que ainda não foram finalizados - ou seja, todos menos o nodo de partida
+            for i in range(len(self.nodes)):
+                if not self.nodes[i].done:
+                    self.nodosAPercorrer.append(self.nodes[i])
 
-            # percorremos os nodos ligados ao nodo com índice self.indice
-            # este valor começa em zero e o atualizamos após o relaxamento de todos os nodos adjacentes
-            for edge in self.nodes[self.indice].edgesComplete:
-                
-                # pegamos o índice da aresta ligada ao nodo
-                edgeIndex = self.index(edge[1])
-                
-                # "relaxamento" dos nodos adjacentes               
-                # verificamos se a distância atual do nodo é menor do que o caminho já percorrido mais o peso da aresta
-                if self.nodes[edgeIndex].distance > self.nodes[self.indice].distance + int(edge[2]):
-                    self.nodes[edgeIndex].parent = self.nodes[self.indice].label
-                    self.nodes[edgeIndex].distance = self.nodes[self.indice].distance + int(edge[2])
+            while len(self.nodosAPercorrer) > 0:            
 
-            # procuramos o nodo com menor distância percorrida para servir como o próximo nodo de partida
-            self.minimum = float('inf')
-            for i in range(len(self.nodosAPercorrer)):
-                #print(self.nodosAPercorrer[i].label, end='')               
-                if self.nodosAPercorrer[i].distance < self.minimum:
-                    self.minimum = self.nodosAPercorrer[i].distance
-                    self.indice = self.index(self.nodosAPercorrer[i].label)
-                    self.removeIndex = i
-        
-            self.nodosAPercorrer.pop(self.removeIndex)
-        
-          
-        print()    
-        for i in range(len(self.nodes)):
-            print(f'label: {self.nodes[i].label}')
-            print(f'parent: {self.nodes[i].parent}')
-            print(f'distance: {self.nodes[i].distance}')
-            print()
+                # percorremos os nodos ligados ao nodo com índice self.indice
+                # este valor começa em zero e o atualizamos após o relaxamento de todos os nodos adjacentes
+                for edge in self.nodes[self.indice].edgesComplete:
+                    
+                    # pegamos o índice da aresta ligada ao nodo
+                    edgeIndex = self.index(edge[1])
+                    
+                    # "relaxamento" dos nodos adjacentes               
+                    # verificamos se a distância atual do nodo é menor do que o caminho já percorrido mais o peso da aresta
+                    if self.nodes[edgeIndex].distance > self.nodes[self.indice].distance + int(edge[2]):
+                        self.nodes[edgeIndex].parent = self.nodes[self.indice].label
+                        self.nodes[edgeIndex].distance = self.nodes[self.indice].distance + int(edge[2])
+
+                # procuramos o nodo com menor distância percorrida para servir como o próximo nodo de partida
+                self.minimum = float('inf')
+                for i in range(len(self.nodosAPercorrer)):
+                                
+                    if self.nodosAPercorrer[i].distance < self.minimum:
+                        self.minimum = self.nodosAPercorrer[i].distance
+                        self.indice = self.index(self.nodosAPercorrer[i].label)
+                        self.removeIndex = i
+
+                # remoção do nodo já finalizado
+                self.nodosAPercorrer.pop(self.removeIndex)        
+            
+            print()    
+            for i in range(len(self.nodes)):
+                print(f'label: {self.nodes[i].label}')
+                print(f'parent: {self.nodes[i].parent}')
+                print(f'distance: {self.nodes[i].distance}')
+                print()
+        else:
+            print('\nERRO! O grafo precisa ser orientado.\n')
        
 
     def bellmanFord(self):
