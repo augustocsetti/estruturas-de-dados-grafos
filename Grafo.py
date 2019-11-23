@@ -109,12 +109,20 @@ class Graph():  # classe para o grafo e seus métodos
 
         # veririca se a aresta já existe e, caso não exista, adicioná-las ao nodo
         if edge[1] not in self.nodes[self.exitNodeIndex].edgesD:
+                # grafo orientado - arestas sem peso
                 self.nodes[self.exitNodeIndex].edgesD.append(edge[1])
-                self.nodes[self.exitNodeIndex].edgesWH.append([edge[1], edge[2]])
-                self.nodes[self.exitNodeIndex].edgesComplete.append(edge)
-
+                # grafo não orientado - arestas sem peso
                 self.nodes[self.exitNodeIndex].edgesND.append(edge[1])
                 self.nodes[self.entryNodeIndex].edgesND.append(edge[0])
+
+                # grafo orientado - completo [nodo1] [nodo2] [peso]
+                self.nodes[self.exitNodeIndex].edgesComplete.append(edge)
+
+                # grafo não orientado - [nodo2] [peso]
+                self.nodes[self.exitNodeIndex].edgesWH.append([edge[1], edge[2]])
+                self.nodes[self.entryNodeIndex].edgesWH.append([edge[0], edge[2]])
+
+                
                 print('\nOperação bem sucedida.\n')
         else:
             print('\nERRO! Esta aresta já existe.\n')
@@ -141,36 +149,31 @@ class Graph():  # classe para o grafo e seus métodos
         for i in range(len(self.nodes)):
 
             # busca label em nodos
-            if self.nodes[i].label == label and edge in self.nodes[i].edgesD:                
+            if self.nodes[i].label == label and edge in self.nodes[i].edgesD:
+                # remoção da aresta simples (sem peso) do grafo direcionado
                 self.nodes[i].edgesD.remove(edge)
                 self.nodes[i].edgesND.remove(edge)
+                # remoção da aresta simples (sem peso) do grafo não direcionado
+                self.nodes[self.indEdge].edgesND.remove(label) 
 
-                # remoção do grado não direcionado
-                self.nodes[self.indEdge].edgesND.remove(label)               
-
-                # remoção da aresta na variável que contém a informação ['nodo', 'peso']
-                for edges in self.nodes[i].edgesWH:                   
-                    if edges[0] == edge:                        
-                        self.delete = edges
-                        break
-                        
-                self.nodes[i].edgesWH.remove(self.delete)
+                # remoção da aresta na variável que contém a informação ['nodo2', 'peso']
+                for edges in self.nodes[i].edgesWH:                    
+                    if edges[0] == edge:           
+                        self.nodes[i].edgesWH.remove(edges)
+                        self.nodes[self.indEdge].edgesWH.remove([label, edges[1]]) 
+                        break 
 
                 # remoção da aresta na variável que contém a informação ['nodo1', 'nodo2', 'peso']
-                for edges in self.nodes[i].edgesComplete:                   
-                    print(edges)
-
-               
+                for edges in self.nodes[i].edgesComplete: 
+                    if edges[0] == label and edges[1] == edge:                        
+                        self.nodes[i].edgesComplete.remove(edges)                        
+                        break
                 
-                
-
                 print('\nOperação bem sucedida.\n')           
-                return
-            
-            
+                return           
 
-        
         print('\nERRO! A aresta não existe.\n')
+
         
     # mostra lista com os nodos e suas arestas
     def view(self):
@@ -188,6 +191,7 @@ class Graph():  # classe para o grafo e seus métodos
                         print(f'--> {self.nodes[i].edgesND[j]}', end='  ')
             print()
         print()
+
 
     # identifica as fontes e sumidouros do grafo
     def identify(self):
