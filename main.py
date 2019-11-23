@@ -82,7 +82,7 @@ def main():
             elif op == 4:
                 g.pop(input('Informe o nodo a ser excluído: '))
             elif op == 5:
-                g.insert(input('Informe a aresta a ser incluída ([nodo1] [nodo2]): '))
+                g.insert(input('Informe a aresta a ser incluída ([nodo1] [nodo2] [peso]): '))
             elif op == 6:
                 g.remove(input('Informe a aresta a ser excluída ([nodo1] [nodo2]): '))
             elif op == 7:
