@@ -146,10 +146,29 @@ class Graph():  # classe para o grafo e seus métodos
                 self.nodes[i].edgesND.remove(edge)
 
                 # remoção do grado não direcionado
-                self.nodes[self.indEdge].edgesND.remove(label)
+                self.nodes[self.indEdge].edgesND.remove(label)               
+
+                # remoção da aresta na variável que contém a informação ['nodo', 'peso']
+                for edges in self.nodes[i].edgesWH:                   
+                    if edges[0] == edge:                        
+                        self.delete = edges
+                        break
+                        
+                self.nodes[i].edgesWH.remove(self.delete)
+
+                # remoção da aresta na variável que contém a informação ['nodo1', 'nodo2', 'peso']
+                for edges in self.nodes[i].edgesComplete:                   
+                    print(edges)
+
+               
+                
+                
 
                 print('\nOperação bem sucedida.\n')           
                 return
+            
+            
+
         
         print('\nERRO! A aresta não existe.\n')
         
