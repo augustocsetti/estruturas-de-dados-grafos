@@ -462,41 +462,50 @@ class Graph():  # classe para o grafo e seus métodos
         # resetando os valores dos atributos dos nodos
         self.nodeResetter()
 
-        # indíce no nodo inicial - escolhido arbitrariamente
+        # indíce no nodo inicial - distância = zero
         self.indice = 0
-        self.minimumIndex = self.indice
-        nodos = []     
-        self.distancia = 0         
+        self.nodes[self.indice].distance = 0
+        self.nodes[self.indice].done = True
+
+        self.nodosAPercorrer = []
 
         for i in range(len(self.nodes)):
-            nodos.append(self.nodes[self.indice].label)
+            if not self.nodes[i].done:
+                self.nodosAPercorrer.append(self.nodes[i])
 
-            self.minimum = float('inf')
+        while len(self.nodosAPercorrer) > 0:            
 
+            # percorremos os nodos ligados ao nodo com índice self.indice
+            # este valor começa em zero e o atualizamos após o relaxamento de todos os nodos adjacentes
             for edge in self.nodes[self.indice].edgesComplete:
-                print(edge)
+                
                 # pegamos o índice da aresta ligada ao nodo
                 edgeIndex = self.index(edge[1])
                 
-                # caso este nodo ainda não tenha pai, configuramos o pai e a distância
-                if self.nodes[edgeIndex].parent == None:
+                # "relaxamento" dos nodos adjacentes               
+                # verificamos se a distância atual do nodo é menor do que o caminho já percorrido mais o peso da aresta
+                if self.nodes[edgeIndex].distance > self.nodes[self.indice].distance + int(edge[2]):
                     self.nodes[edgeIndex].parent = self.nodes[self.indice].label
-                    self.nodes[edgeIndex].distance = self.distancia + int(edge[2])
-                    
-                    # guardando os dados para a procura do próximo nodo
-                    if self.minimum > int(edge[2]):
-                        self.minimum = int(edge[2])
-                        self.minimumIndex = self.index(edge[1])
-                     
-            self.indice = self.minimumIndex
-            if self.minimum < float('inf'):
-                self.distancia += self.minimum
+                    self.nodes[edgeIndex].distance = self.nodes[self.indice].distance + int(edge[2])
 
-
-        print(nodos)
-        print(self.distancia)
-           
-
+            # procuramos o nodo com menor distância percorrida para servir como o próximo nodo de partida
+            self.minimum = float('inf')
+            for i in range(len(self.nodosAPercorrer)):
+                #print(self.nodosAPercorrer[i].label, end='')               
+                if self.nodosAPercorrer[i].distance < self.minimum:
+                    self.minimum = self.nodosAPercorrer[i].distance
+                    self.indice = self.index(self.nodosAPercorrer[i].label)
+                    self.removeIndex = i
+        
+            self.nodosAPercorrer.pop(self.removeIndex)
+        
+          
+        print()    
+        for i in range(len(self.nodes)):
+            print(f'label: {self.nodes[i].label}')
+            print(f'parent: {self.nodes[i].parent}')
+            print(f'distance: {self.nodes[i].distance}')
+            print()
        
 
     def bellmanFord(self):
