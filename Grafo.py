@@ -46,7 +46,6 @@ class Graph():  # classe para o grafo e seus métodos
             self.nodes.append(Node(node, tempD, tempND, tempWPrim, tempComplete))
 
         
-
     # método para inserir um novo nodo a um grafo já existente
     def push(self, label):
         for i in range(len(self.nodes)):
@@ -174,7 +173,6 @@ class Graph():  # classe para o grafo e seus métodos
 
         print('\nERRO! A aresta não existe.\n')
 
-        
     # mostra lista com os nodos e suas arestas
     def view(self):
         print()
@@ -191,7 +189,6 @@ class Graph():  # classe para o grafo e seus métodos
                         print(f'--> {self.nodes[i].edgesND[j]}', end='  ')
             print()
         print()
-
 
     # identifica as fontes e sumidouros do grafo
     def identify(self):
@@ -295,7 +292,6 @@ class Graph():  # classe para o grafo e seus métodos
             print()
         print()
 
-
     # método para mudar a definição do grafo 
     def guidance(self):        
         self.directed = not self.directed
@@ -305,7 +301,6 @@ class Graph():  # classe para o grafo e seus métodos
         else:
             print('\nGrafo não orientado.\n')
         
-
     #ATENÇÃO! CASO COM ERRO
     # algoritmo de busca em largura BFS
     def breadthSearch(self, s):
@@ -444,6 +439,7 @@ class Graph():  # classe para o grafo e seus métodos
         print(total)
         print()
 
+
     # método auxiliar para Prim
     def extractMin(self):
 
@@ -457,10 +453,9 @@ class Graph():  # classe para o grafo e seus métodos
         
         return self.indiceMenor
 
-
-    # algoritmo que procura o menor caminho entre os nodos de um grafo
-    # vai formando árvores (neste caso, pares de nodos) até terminar
+    # procura o menor caminho entre os nodos de um grafo
     def kruskal(self):
+        # vai formando árvores (neste caso, pares de nodos) até terminar
 
         # resetando os valores dos atributos dos nodos
         self.nodeResetter() 
@@ -494,9 +489,8 @@ class Graph():  # classe para o grafo e seus métodos
 
         print(self.minimum)
         
-
-    # https://www.youtube.com/watch?v=ovkITlgyJ2s&t=0s
     def dijkstra(self):
+        # https://www.youtube.com/watch?v=ovkITlgyJ2s&t=0s
         # o grafo deve ser direcionado!
         if self.directed:
 
@@ -559,7 +553,6 @@ class Graph():  # classe para o grafo e seus métodos
         else:
             print('\nERRO! O grafo precisa ser orientado.\n')
        
-
     def bellmanFord(self):
         # resetando os valores dos atributos dos nodos
         self.nodeResetter() 
@@ -572,7 +565,6 @@ class Graph():  # classe para o grafo e seus métodos
             self.nodes[i].key = float('inf')
             self.nodes[i].done = False
             self.nodes[i].distance = float('inf')
-
 
     # retorna índice (da lista self.grafos) de algum nodo
     def index(self, label):
