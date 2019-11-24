@@ -14,6 +14,7 @@ QUESTÕES EM ABERTO
 uma erro de char~int com uma lista. Testar!
 
 FALTA
+- 2. Implementar um grafo usando a representação de matriz de adjacência.
 
 - Implementar os algoritmos Prim;
 - Implementar os algoritmos Bellman-Ford.
