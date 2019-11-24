@@ -15,9 +15,6 @@ uma erro de char~int com uma lista. Testar!
 
 FALTA
 - 2. Implementar um grafo usando a representação de matriz de adjacência.
-
-- Implementar os algoritmos Prim;
-- Implementar os algoritmos Bellman-Ford.
 '''
 
 from Grafo import *                
@@ -104,7 +101,7 @@ def main():
             elif op == 14:
                 g.dijkstra()
             elif op == 15:
-                g.bellmanFord()
+                g.bellmanFord(input('Insira o nodo para iniciar o caminho: '))
             elif op == 16:
                 g.view2()
             elif op < 0 or op > 16:

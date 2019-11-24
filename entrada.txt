@@ -1,11 +1,11 @@
-r s t u v w y x
-r v 2
-r s 1
-s w 2
-w t 3
-t u 5
-x y 6
-y u 7
-u x 2
-t y 9
-w y 3
+s t x y z
+s t 6
+s y 7
+t x 5
+t z -4
+t y 8
+x t -6
+y x -3
+y z 9
+z s 2
+z x 7

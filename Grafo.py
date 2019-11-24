@@ -545,11 +545,12 @@ class Graph():  # classe para o grafo e seus métodos
 
     def bellmanFord(self, s):
         # https://www.youtube.com/watch?v=vEztwiTELWs
-        
+
         # resetando os valores dos atributos dos nodos
         self.nodeResetter() 
-
+        
         # atribui distância zero ao primeiro termo do grafo
+        s = self.index(s)
         self.nodes[s].distance = 0
 
         # conta as repetições de relaxamento de nodos
@@ -572,19 +573,22 @@ class Graph():  # classe para o grafo e seus métodos
                         self.nodes[edgeIndex].distance = self.nodes[j].distance + int(edge[2])
 
         # repete-se o processo para averiguar se há ciclos negativos
-        # o que causaria sempre novos 
-        for i in range(len(self.nodes) - 1):
-            for j in range(len(self.nodes)):           
-                for edge in self.nodes[j].edgesComplete:  
-                    if self.nodes[edgeIndex].distance > self.nodes[j].distance + int(edge[2]):
-                        return (False)
+        # o que causaria sempre novos. Retorna False se há
+        for j in range(len(self.nodes)):
+            for edge in self.nodes[j].edgesComplete:  
+                edgeIndex = self.index(edge[1])
+                if self.nodes[edgeIndex].distance > self.nodes[j].distance + int(edge[2]):
+                    print('\nERRO! O grafo não pode possuir ciclo negativo.\n')
+                    return False
+
+        # se não há ciclo negativo imprimi-se os parâmetros
         print()    
         for i in range(len(self.nodes)):
-            print(f'label: {self.nodes[i].label}')
-            print(f'parent: {self.nodes[i].parent}')
-            print(f'distance: {self.nodes[i].distance}')
+            print(f'Label: {self.nodes[i].label}')
+            print(f'Parent: {self.nodes[i].parent}')
+            print(f'Distance: {self.nodes[i].distance}')
             print()    
-            
+
         return True
 
     # método auxiliar para resetar atributos dos nodos do grafo
