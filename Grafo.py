@@ -374,6 +374,7 @@ class Graph():  # classe para o grafo e seus métodos
         self.time += 1
         self.nodes[u].time.append(self.time)
 
+
     #ATENÇÃO! MELHORAR
     # printa informações de cada nodo pós busca por profundidade
     def infosDepthSearch(self):
@@ -383,6 +384,7 @@ class Graph():  # classe para o grafo e seus métodos
             print(f'tempo {elem.time}')
             print(f'cor {elem.set}')
             print()
+
     
     # algoritmo que procura o menor caminho entre os nodos de um grafo
     def prim(self):
@@ -398,49 +400,57 @@ class Graph():  # classe para o grafo e seus métodos
         
         # lista auxiliar para garantir que não haverá desconexão entre os nodos
         self.minPath = []
-        self.size = len(self.nodes)            
+        self.size = len(self.nodes)
                    
         while self.size > 0:
-
             self.size -= 1
-            
-            self.pai = self.nodes[self.indice].label
 
-            if self.pai not in self.minPath:
-                self.minPath.append(self.pai)
-
+            # percorrendo as arestas do nodo indicado
             for edgeW in self.nodes[self.indice].edgesWH:
-
+                # procuramos o índice do nodo que forma a aresta
                 edgeIndex = self.index(edgeW[0])
-                print(f'pai = {self.nodes[edgeIndex].parent}')
-                if int(edgeW[1]) < self.nodes[edgeIndex].key and self.nodes[edgeIndex].parent not in self.minPath:
+
+                # formamos o par de nodos para fazer a verificação se já pertecem ao menor caminho
+                aresta = [self.nodes[self.indice].label, edgeW[0]]
+
+                if int(edgeW[1]) < self.nodes[edgeIndex].key and aresta not in self.minPath and self.nodes[edgeIndex].done != True:
                     # acessamos o nodo na posição encontrada e setamos o pai e o valor da chave (peso da aresta)
-                    self.nodes[edgeIndex].parent = self.pai
+                    self.nodes[edgeIndex].parent = self.nodes[self.indice].label
                     self.nodes[edgeIndex].key = int(edgeW[1])
+                    self.minPath.append([self.nodes[self.indice].label, edgeW[0]])
             
             self.nodes[self.indice].done = True
+
+            # procuramos o índice do próximo nodo com menor chave
             self.indice = self.extractMin()
+            if self.indice == -1:
+                break
            
+        total = 0
         # mostra o nodo, seu pai e o peso da ligação até este
-        # montando o grafo, nenhum nodo deve ficar desconectado
         for i in range(len(self.nodes)):
             print(f'Nodo = {self.nodes[i].label}')
             print(f'Pai = {self.nodes[i].parent}')
             print(f'Chave = {self.nodes[i].key}')
+            total += self.nodes[i].key
             print()
-       
+        
+        print(self.minPath)
+        print(total)
+        print()
+
+
     # método auxiliar para Prim
     def extractMin(self):
 
         self.indiceMenor = -1
         self.menor = float('inf')
 
-        for node in self.nodes:
-            
-            if node.key < self.menor and node.done == False:                
+        for node in self.nodes:            
+            if node.key < self.menor and node.done != True:
                 self.menor = node.key
-                self.indiceMenor = self.index(node.label)
-                
+                self.indiceMenor = self.index(node.label)                
+        
         return self.indiceMenor
 
     # procura o menor caminho entre os nodos de um grafo

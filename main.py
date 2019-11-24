@@ -26,8 +26,7 @@ def readFile(): # função para receber entrada do arquivo
     with open('entrada.txt') as file:
         lines = [line.rstrip() for line in file]
     for i in range(len(lines)):
-        lines[i] = lines[i].split(" ")
-    file.close()
+        lines[i] = lines[i].split(" ")   
 
     return lines[0], lines
 
