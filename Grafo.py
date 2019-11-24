@@ -446,49 +446,68 @@ class Graph():  # classe para o grafo e seus métodos
 
     # algoritmo que procura o menor caminho entre os nodos de um grafo
     def prim(self):
+        if self.directed:
+            print('\nERRO! O grafo precisa ser não orientado.\n')
+            return
+        else:
+            # veriricando se o grafo possui arestas com pesos negativos
+            # este algoritmo não funciona caso elas existam
+            for i in range(len(self.nodes)):
+                for edge in self.nodes[i].edgesComplete:
+                    if int(edge[2]) < 0:
+                        print('\nERRO! O grafo não pode possuir arestas com peso negativo.\n')
+                        return
 
-        # resetando os valores dos atributos dos nodos
-        self.nodeResetter() 
+            # resetando os valores dos atributos dos nodos
+            self.nodeResetter() 
 
-        # variável do nodo inicial - escolhida arbitrariamente        
-        self.indice = 0
-        
-        # a chave do nodo de partida é sempre 0
-        self.nodes[self.indice].key = 0  
-        
-        # lista auxiliar para garantir que não haverá desconexão entre os nodos
-        self.minPath = []
-        self.size = len(self.nodes)            
-                   
-        while self.size > 0:
-
-            self.size -= 1
+            # variável do nodo inicial - escolhida arbitrariamente        
+            self.indice = 0
             
-            self.pai = self.nodes[self.indice].label
-
-            if self.pai not in self.minPath:
-                self.minPath.append(self.pai)
-
-            for edgeW in self.nodes[self.indice].edgesWH:
-
-                edgeIndex = self.index(edgeW[0])
-                print(f'pai = {self.nodes[edgeIndex].parent}')
-                if int(edgeW[1]) < self.nodes[edgeIndex].key and self.nodes[edgeIndex].parent not in self.minPath:
-                    # acessamos o nodo na posição encontrada e setamos o pai e o valor da chave (peso da aresta)
-                    self.nodes[edgeIndex].parent = self.pai
-                    self.nodes[edgeIndex].key = int(edgeW[1])
+            # a chave do nodo de partida é sempre 0
+            self.nodes[self.indice].key = 0  
             
-            self.nodes[self.indice].done = True
-            self.indice = self.extractMin()
-           
-        # mostra o nodo, seu pai e o peso da ligação até este
-        # montando o grafo, nenhum nodo deve ficar desconectado
-        for i in range(len(self.nodes)):
-            print(f'Nodo = {self.nodes[i].label}')
-            print(f'Pai = {self.nodes[i].parent}')
-            print(f'Chave = {self.nodes[i].key}')
+            # lista auxiliar para garantir que não haverá desconexão entre os nodos
+            self.minPath = []
+            self.size = len(self.nodes)
+                    
+            while self.size > 0:
+                self.size -= 1
+
+                # percorrendo as arestas do nodo indicado
+                for edgeW in self.nodes[self.indice].edgesWH:
+                    # procuramos o índice do nodo que forma a aresta
+                    edgeIndex = self.index(edgeW[0])
+
+                    # formamos o par de nodos para fazer a verificação se já pertecem ao menor caminho
+                    aresta = [self.nodes[self.indice].label, edgeW[0]]
+
+                    if int(edgeW[1]) < self.nodes[edgeIndex].key and aresta not in self.minPath and self.nodes[edgeIndex].done != True:
+                        # acessamos o nodo na posição encontrada e setamos o pai e o valor da chave (peso da aresta)
+                        self.nodes[edgeIndex].parent = self.nodes[self.indice].label
+                        self.nodes[edgeIndex].key = int(edgeW[1])
+                        self.minPath.append([self.nodes[self.indice].label, edgeW[0]])
+                
+                self.nodes[self.indice].done = True
+
+                # procuramos o índice do próximo nodo com menor chave
+                self.indice = self.extractMin()
+                if self.indice == -1:
+                    break
+            
+            total = 0
+            # mostra o nodo, seu pai e o peso da ligação até este
+            for i in range(len(self.nodes)):
+                print(f'Nodo = {self.nodes[i].label}')
+                print(f'Pai = {self.nodes[i].parent}')
+                print(f'Chave = {self.nodes[i].key}')
+                total += self.nodes[i].key
+                print()
+            
+            print(self.minPath)
+            print(total)
             print()
-       
+
     # método auxiliar para Prim
     def extractMin(self):
 
@@ -506,37 +525,49 @@ class Graph():  # classe para o grafo e seus métodos
     def kruskal(self):
         # vai formando árvores (neste caso, pares de nodos) até terminar
 
-        # resetando os valores dos atributos dos nodos
-        self.nodeResetter() 
+        if self.directed:
+            print('\nERRO! O grafo precisa ser não orientado.\n')
+            return
+        else:
+            # veriricando se o grafo possui arestas com pesos negativos
+            # este algoritmo não funciona caso elas existam
+            for i in range(len(self.nodes)):
+                for edge in self.nodes[i].edgesComplete:
+                    if int(edge[2]) < 0:
+                        print('\nERRO! O grafo não pode possuir arestas com peso negativo.\n')
+                        return
+                        
+            # resetando os valores dos atributos dos nodos
+            self.nodeResetter() 
 
-        # listas auxiliares para guardar as listas em ordem de peso e o resultado final, respectivamente
-        self.ordenadas = []
-        self.minimum = []
+            # listas auxiliares para guardar as listas em ordem de peso e o resultado final, respectivamente
+            self.ordenadas = []
+            self.minimum = []
 
-        # guardamos todas as arestas
-        for i in range(len(self.nodes)):
-            for edge in self.nodes[i].edgesComplete:
-                self.ordenadas.append(edge)
+            # guardamos todas as arestas
+            for i in range(len(self.nodes)):
+                for edge in self.nodes[i].edgesComplete:
+                    self.ordenadas.append(edge)
 
-        # e as ordenamos por peso
-        self.ordenadas = sorted(self.ordenadas, key=itemgetter(2))
+            # e as ordenamos por peso
+            self.ordenadas = sorted(self.ordenadas, key=itemgetter(2))
 
-        # percorremos as arestas ordenadas e utilizamos o índice do primeiro elemento
-        for edge in self.ordenadas:
-            self.indice = self.index(edge[0])
-            
-            # percorrendo todas as arestas no índice encontrado
-            for edgesK in self.nodes[self.indice].edgesComplete:
+            # percorremos as arestas ordenadas e utilizamos o índice do primeiro elemento
+            for edge in self.ordenadas:
+                self.indice = self.index(edge[0])
+                
+                # percorrendo todas as arestas no índice encontrado
+                for edgesK in self.nodes[self.indice].edgesComplete:
 
-                # agora pegamos o índice no segundo elemento da aresta para verificar se ele já tem pai
-                # caso não tenha ela será definido - isto evita que o grafo fique um ciclo
-                edgeIndex = self.index(edgesK[1])
-              
-                if self.nodes[edgeIndex].parent == None:
-                    self.nodes[edgeIndex].parent = edgesK[0]
-                    self.minimum.append(edgesK)
+                    # agora pegamos o índice no segundo elemento da aresta para verificar se ele já tem pai
+                    # caso não tenha ela será definido - isto evita que o grafo fique um ciclo
+                    edgeIndex = self.index(edgesK[1])
+                
+                    if self.nodes[edgeIndex].parent == None:
+                        self.nodes[edgeIndex].parent = edgesK[0]
+                        self.minimum.append(edgesK)
 
-        print(self.minimum)
+            print(self.minimum)
         
     def dijkstra(self):
         # https://www.youtube.com/watch?v=ovkITlgyJ2s&t=0s

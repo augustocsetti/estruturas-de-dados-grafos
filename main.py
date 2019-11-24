@@ -6,12 +6,14 @@ Murilo Vitória da Silva - Matrícula 124816
 
 A entrada se dá no formato de uma lista de adjacência no modelo a seguir:
 
+
 s t x y z -> declaração dos nodos
 s t 6 -> [aresta pai - aresta filho - peso da aresta]
 s y 7
 t x 5
 t z -4
 t y 8
+
 
 Os métodos implementados para interagir com o grafo estão em Grafo.py
 '''
