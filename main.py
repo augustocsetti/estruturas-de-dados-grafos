@@ -13,8 +13,6 @@ QUESTÕES EM ABERTO
 - Aconteceu um erro quando estava testando várias maneiras de busca por largura
 uma erro de char~int com uma lista. Testar!
 
-FALTA
-- 2. Implementar um grafo usando a representação de matriz de adjacência.
 '''
 
 from Grafo import *                
@@ -45,7 +43,8 @@ def menu(): # menu do programa
 
     return option
 
-#==============================================================================================================#
+
+#==== MAIN ====#
 
 def main():
 
@@ -93,7 +92,6 @@ def main():
                 g.breadthSearch(input('Informe o nodo para iniciar a busca: '))
             elif op == 11:
                 g.depthSearch()
-                g.infosDepthSearch()
             elif op == 12:                
                 g.prim()
             elif op == 13:                

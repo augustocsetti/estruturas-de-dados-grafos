@@ -45,8 +45,9 @@ class Graph():  # classe para o grafo e seus métodos
             # cria nodo e adiciona a lista de nodos
             self.nodes.append(Node(node, tempD, tempND, tempWPrim, tempComplete))
 
-        
-    # método para inserir um novo nodo a um grafo já existente
+    #==== NODOS E ARESTAS ====#    
+
+    # insere nodo
     def push(self, label):
         for i in range(len(self.nodes)):
             if label == self.nodes[i].label:
@@ -57,7 +58,7 @@ class Graph():  # classe para o grafo e seus métodos
        
         print('\nOperação bem sucedida.\n')
 
-    # remove um nodo.
+    # remove nodo
     def pop(self, label):
         # variável para armazenar posição do nodo a ser deletado
         indexLabel = -1
@@ -79,11 +80,11 @@ class Graph():  # classe para o grafo e seus métodos
         # exclui nodo
         if indexLabel != -1:
             self.nodes.pop(indexLabel)
-            print('\nOperação bem sucedida.\n')
+            print('\nNodo excluido com sucesso. Operação bem sucedida.\n')
         else:
             print('\nERRO! Nodo não existe no grafo.\n')
 
-    # método para inserir arestras entre dois nodos já existentes
+    # insere arestras
     def insert(self, edge):  
         # verifica se existem nodos no grafo
         if len(self.nodes) == 0:
@@ -168,10 +169,12 @@ class Graph():  # classe para o grafo e seus métodos
                         self.nodes[i].edgesComplete.remove(edges)                        
                         break
                 
-                print('\nOperação bem sucedida.\n')           
+                print('\nAresta excluida com sucedida.\n')           
                 return           
 
         print('\nERRO! A aresta não existe.\n')
+
+    #==== PRINT ====#
 
     # mostra lista com os nodos e suas arestas
     def view(self):
@@ -190,7 +193,51 @@ class Graph():  # classe para o grafo e seus métodos
             print()
         print()
 
-    # identifica as fontes e sumidouros do grafo
+    # mostra lista com os nodos, suas arestas e pesos
+    def view2(self):
+        print()
+        for i in range(len(self.nodes)):
+            print(f'{self.nodes[i].label}: ', end='')
+            if self.nodes[i].edgesWH:                
+                for j in range(len(self.nodes[i].edgesWH)):
+                    print(f'{self.nodes[i].edgesWH[j]} ', end='  ')
+
+            print()
+        print()
+
+    # mostra a matriz de adjacência do grafo
+    def adjacencyMatrix(self):
+        print()
+
+        # mostra os nodos na horizontal - primeira linha
+        print('     ', end='')
+        for i in range(len(self.nodes)):
+            print(f'{self.nodes[i].label}  ', end='')            
+
+        print('\n')
+
+        # procura pelos nodos que possuem arestas entre si
+        for i in range(len(self.nodes)):
+            # mostra os nodos na vertical - primeira coluna
+            print(f'{(self.nodes[i].label)}    ', end='')
+            for j in range(len(self.nodes)):
+                if self.directed:
+                    if self.nodes[j].label in self.nodes[i].edgesD:
+                        print('1  ', end='')
+                    else:
+                        print('0  ', end='')
+                else:
+                    if self.nodes[j].label in self.nodes[i].edgesND:
+                        print('1  ', end='')
+                    else:
+                        print('0  ', end='')
+                        
+            print()
+        print()
+
+    #==== GRAUS E ORIENTAÇÃO ====#
+
+    # identifica fontes e sumidouros
     def identify(self):
         self.source = [] # nodos fonte não têm arestas de entrada
         self.sink = [] # nodos sumidouros não têm aresta de saída
@@ -262,37 +309,7 @@ class Graph():  # classe para o grafo e seus métodos
             print(f'\nGrau de entrada do nodo {label}: {self.entry}')
             print(f'Grau de saída do nodo {label}: {self.exit}\n')
 
-    # mostra a matriz de adjacência do grafo
-    def adjacencyMatrix(self):
-        print()
-
-        # mostra os nodos na horizontal - primeira linha
-        print('     ', end='')
-        for i in range(len(self.nodes)):
-            print(f'{self.nodes[i].label}  ', end='')            
-
-        print('\n')
-
-        # procura pelos nodos que possuem arestas entre si
-        for i in range(len(self.nodes)):
-            # mostra os nodos na vertical - primeira coluna
-            print(f'{(self.nodes[i].label)}    ', end='')
-            for j in range(len(self.nodes)):
-                if self.directed:
-                    if self.nodes[j].label in self.nodes[i].edgesD:
-                        print('1  ', end='')
-                    else:
-                        print('0  ', end='')
-                else:
-                    if self.nodes[j].label in self.nodes[i].edgesND:
-                        print('1  ', end='')
-                    else:
-                        print('0  ', end='')
-                        
-            print()
-        print()
-
-    # método para mudar a definição do grafo 
+    # muda orientação do grafo
     def guidance(self):        
         self.directed = not self.directed
 
@@ -300,7 +317,9 @@ class Graph():  # classe para o grafo e seus métodos
             print('\nGrafo orientado.\n')
         else:
             print('\nGrafo não orientado.\n')
-        
+
+    #==== BUSCA ====#
+
     #ATENÇÃO! CASO COM ERRO
     # algoritmo de busca em largura BFS
     def breadthSearch(self, s):
@@ -321,12 +340,17 @@ class Graph():  # classe para o grafo e seus métodos
         line.append(indexS)
 
         # percorre todos os valores que possuem conexão com ramo de 's'
+        time = 0
         while(len(line) != 0):
             # define primeiro valor da fila para analisar arestas
             u = line[0]
 
             line.pop(0)
-            #processa(u) faz alguma coisa com o nodo percorrido
+
+            # processa(u) faz alguma coisa com o nodo percorrido
+            # aqui apenas adicionaremos um contador 
+            self.nodes[u].time = time
+            time += 1
 
             # percorre arestas do nodo u e checa se já foram setadas
             # se não seta e adiciona a fila
@@ -334,7 +358,16 @@ class Graph():  # classe para o grafo e seus métodos
                 indexTemp = self.index(self.nodes[u].edgesD[i])
                 if self.nodes[indexTemp].set == False:
                     self.nodes[indexTemp].set = True
+                    self.nodes[indexTemp].father = self.nodes[u].label
                     line.append(indexTemp)
+
+        # printa informações de cada nodo pós busca por profundidade
+        for elem in self.nodes:
+            print()
+            print(f'Nodo: {elem.label}')
+            print(f'Pai: {elem.father}')
+            print(f'Tempo: {elem.time}')
+            print(f'Set: {elem.set}')
 
     # algoritmo de busca em largura DFS-1
     def depthSearch(self):
@@ -350,6 +383,21 @@ class Graph():  # classe para o grafo e seus métodos
         for i in range(len(self.nodes)):
             if self.nodes[i].set == WHITE:
                 self.depthSearchVisit(i)
+
+        # printa informações de cada nodo pós busca por profundidade
+        print()
+        for elem in self.nodes:
+            print(f'Nodo: {elem.label}')
+            print(f'Pai: {elem.father}')
+            print(f'Tempo (Abertura): {elem.time[0]}')
+            print(f'Tempo (Fechamento): {elem.time[1]}')
+            if elem.set == 0:
+                print(f'Cor: White')
+            elif elem.set == 1:
+                print(f'Cor: Gray')
+            else:
+                print(f'Cor: Black')
+            print()
 
     # algoritmo de busca em largura DFS-2
     def depthSearchVisit(self, u):
@@ -374,16 +422,8 @@ class Graph():  # classe para o grafo e seus métodos
         self.time += 1
         self.nodes[u].time.append(self.time)
 
-    #ATENÇÃO! MELHORAR
-    # printa informações de cada nodo pós busca por profundidade
-    def infosDepthSearch(self):
-        for elem in self.nodes:
-            print(f'label: {elem.label}')
-            print(f'pai {elem.father}')
-            print(f'tempo {elem.time}')
-            print(f'cor {elem.set}')
-            print()
-    
+    #==== CAMINHOS ====# 
+
     # algoritmo que procura o menor caminho entre os nodos de um grafo
     def prim(self):
 
@@ -443,7 +483,6 @@ class Graph():  # classe para o grafo e seus métodos
                 
         return self.indiceMenor
 
-    # procura o menor caminho entre os nodos de um grafo
     def kruskal(self):
         # vai formando árvores (neste caso, pares de nodos) até terminar
 
@@ -591,13 +630,15 @@ class Graph():  # classe para o grafo e seus métodos
 
         return True
 
-    # método auxiliar para resetar atributos dos nodos do grafo
+    # auxilia a resetar atributos dos nodos do grafo
     def nodeResetter(self):
         for i in range(len(self.nodes)):
             self.nodes[i].parent = None
             self.nodes[i].key = float('inf')
             self.nodes[i].done = False
             self.nodes[i].distance = float('inf')     
+
+    #==== AUXILIAR ====#
 
     # retorna índice (da lista self.grafos) de algum nodo
     def index(self, label):
@@ -607,15 +648,3 @@ class Graph():  # classe para o grafo e seus métodos
         
         # caso não encontre o elemento procurado
         return -1
-
-    # ver ligação dos nodos e o peso destas ligações
-    def view2(self):
-        print()
-        for i in range(len(self.nodes)):
-            print(f'{self.nodes[i].label}: ', end='')
-            if self.nodes[i].edgesWH:                
-                for j in range(len(self.nodes[i].edgesWH)):
-                    print(f'{self.nodes[i].edgesWH[j]} ', end='  ')
-
-            print()
-        print()
