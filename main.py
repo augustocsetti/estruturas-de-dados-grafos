@@ -1,22 +1,22 @@
 '''
     Tarefa sobre Grafos
+
     Augusto Cardoso Setti - Matrícula 119994
     Murilo Vitória da Silva - Matrícula 124816
 
-QUESTÕES
+QUESTÕES EM ABERTO
 
-- Acertar buscas com edgesD edgesND
-- Criar classes específicas para buscas? Graph está ficando muito grande.
-- Melhorar mostra informações com busca por profundidade e largura
+- Acertar buscas com edgesD edgesND;
+- Criar classes específicas para buscas? Graph está ficando muito grande;
+- Melhorar mostra informações com busca por profundidade e largura;
 
 - Aconteceu um erro quando estava testando várias maneiras de busca por largura
 uma erro de char~int com uma lista. Testar!
 
 FALTA
 
-- Implementar os algoritmos Prim e Kruskal
-- Implementar os algoritmos Dijkstra
-- Implementar os algoritmos Bellman-Ford
+- Implementar os algoritmos Prim;
+- Implementar os algoritmos Bellman-Ford.
 '''
 
 from Grafo import *                
