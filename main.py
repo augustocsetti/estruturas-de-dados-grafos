@@ -1,18 +1,19 @@
 '''
-    Tarefa sobre Grafos
+Tarefa sobre Grafos
 
-    Augusto Cardoso Setti - Matrícula 119994
-    Murilo Vitória da Silva - Matrícula 124816
+Augusto Cardoso Setti - Matrícula 119994
+Murilo Vitória da Silva - Matrícula 124816
 
-QUESTÕES EM ABERTO
+A entrada se dá no formato de uma lista de adjacência no modelo a seguir:
 
-- Acertar buscas com edgesD edgesND;
-- Criar classes específicas para buscas e caminhos;
-- Melhorar mostra informações com busca por profundidade e largura;
+s t x y z -> declaração dos nodos
+s t 6 -> [aresta pai - aresta filho - peso da aresta]
+s y 7
+t x 5
+t z -4
+t y 8
 
-- Aconteceu um erro quando estava testando várias maneiras de busca por largura
-uma erro de char~int com uma lista. Testar!
-
+Os métodos implementados para interagir com o grafo estão em Grafo.py
 '''
 
 from Grafo import *                
@@ -21,7 +22,8 @@ def readFile(): # função para receber entrada do arquivo
     with open('entrada.txt') as file:
         lines = [line.rstrip() for line in file]
     for i in range(len(lines)):
-        lines[i] = lines[i].split(" ")   
+        lines[i] = lines[i].split(" ")
+    file.close()
 
     return lines[0], lines
 
