@@ -352,14 +352,23 @@ class Graph():  # classe para o grafo e seus métodos
             self.nodes[u].time = time
             time += 1
 
-            # percorre arestas do nodo u e checa se já foram setadas
-            # se não seta e adiciona a fila
-            for i in range (len(self.nodes[u].edgesD)):
-                indexTemp = self.index(self.nodes[u].edgesD[i])
-                if self.nodes[indexTemp].set == False:
-                    self.nodes[indexTemp].set = True
-                    self.nodes[indexTemp].father = self.nodes[u].label
-                    line.append(indexTemp)
+            # funciona para orientado ou não orientado
+            if self.directed:
+                # percorre arestas do nodo u e checa se já foram setadas
+                # se não seta e adiciona a fila
+                for i in range (len(self.nodes[u].edgesD)):
+                    indexTemp = self.index(self.nodes[u].edgesD[i])
+                    if self.nodes[indexTemp].set == False:
+                        self.nodes[indexTemp].set = True
+                        self.nodes[indexTemp].father = self.nodes[u].label
+                        line.append(indexTemp)
+            else:
+                for i in range (len(self.nodes[u].edgesND)):
+                    indexTemp = self.index(self.nodes[u].edgesND[i])
+                    if self.nodes[indexTemp].set == False:
+                        self.nodes[indexTemp].set = True
+                        self.nodes[indexTemp].father = self.nodes[u].label
+                        line.append(indexTemp)
 
         # printa informações de cada nodo pós busca por profundidade
         for elem in self.nodes:
@@ -376,6 +385,7 @@ class Graph():  # classe para o grafo e seus métodos
         # inicializa set de todos elementos
         for elem in self.nodes:
             elem.set = WHITE
+            elem.time = []
         
         # tempo de abertura e fechamento
         self.time = 0
@@ -408,14 +418,24 @@ class Graph():  # classe para o grafo e seus métodos
         self.time += 1
         self.nodes[u].time.append(self.time)
 
-        # busca nodos vizinhos
-        for i in range(len(self.nodes[u].edgesD)):
-            indexTemp = self.index(self.nodes[u].edgesD[i])
-            # se não tiver sido 'aberto' (nodo branco) acessa e chama recursão
-            if self.nodes[indexTemp].set == WHITE:
-                # define pai do nodo encontrado
-                self.nodes[indexTemp].father = self.nodes[u].label
-                self.depthSearchVisit(indexTemp)
+        # funciona para orientado ou não
+        if self.directed:
+            # busca nodos vizinhos
+            for i in range(len(self.nodes[u].edgesD)):
+                indexTemp = self.index(self.nodes[u].edgesD[i])
+                # se não tiver sido 'aberto' (nodo branco) acessa e chama recursão
+                if self.nodes[indexTemp].set == WHITE:
+                    # define pai do nodo encontrado
+                    self.nodes[indexTemp].father = self.nodes[u].label
+                    self.depthSearchVisit(indexTemp)
+
+        else:
+            for i in range(len(self.nodes[u].edgesND)):
+                indexTemp = self.index(self.nodes[u].edgesND[i])
+                if self.nodes[indexTemp].set == WHITE:
+                    self.nodes[indexTemp].father = self.nodes[u].label
+                    self.depthSearchVisit(indexTemp)
+
 
         # fecha nodo (seta cor preto) e adiciona tempo de saída
         self.nodes[u].set = BLACK
@@ -438,57 +458,49 @@ class Graph():  # classe para o grafo e seus métodos
         
         # lista auxiliar para garantir que não haverá desconexão entre os nodos
         self.minPath = []
-        self.size = len(self.nodes)
+        self.size = len(self.nodes)            
                    
         while self.size > 0:
+
             self.size -= 1
+            
+            self.pai = self.nodes[self.indice].label
 
-            # percorrendo as arestas do nodo indicado
+            if self.pai not in self.minPath:
+                self.minPath.append(self.pai)
+
             for edgeW in self.nodes[self.indice].edgesWH:
-                # procuramos o índice do nodo que forma a aresta
+
                 edgeIndex = self.index(edgeW[0])
-
-                # formamos o par de nodos para fazer a verificação se já pertecem ao menor caminho
-                aresta = [self.nodes[self.indice].label, edgeW[0]]
-
-                if int(edgeW[1]) < self.nodes[edgeIndex].key and aresta not in self.minPath and self.nodes[edgeIndex].done != True:
+                print(f'pai = {self.nodes[edgeIndex].parent}')
+                if int(edgeW[1]) < self.nodes[edgeIndex].key and self.nodes[edgeIndex].parent not in self.minPath:
                     # acessamos o nodo na posição encontrada e setamos o pai e o valor da chave (peso da aresta)
-                    self.nodes[edgeIndex].parent = self.nodes[self.indice].label
+                    self.nodes[edgeIndex].parent = self.pai
                     self.nodes[edgeIndex].key = int(edgeW[1])
-                    self.minPath.append([self.nodes[self.indice].label, edgeW[0]])
             
             self.nodes[self.indice].done = True
-
-            # procuramos o índice do próximo nodo com menor chave
             self.indice = self.extractMin()
-            if self.indice == -1:
-                break
            
-        total = 0
         # mostra o nodo, seu pai e o peso da ligação até este
+        # montando o grafo, nenhum nodo deve ficar desconectado
         for i in range(len(self.nodes)):
             print(f'Nodo = {self.nodes[i].label}')
             print(f'Pai = {self.nodes[i].parent}')
             print(f'Chave = {self.nodes[i].key}')
-            total += self.nodes[i].key
             print()
-        
-        print(self.minPath)
-        print(total)
-        print()
-
-
+       
     # método auxiliar para Prim
     def extractMin(self):
 
         self.indiceMenor = -1
         self.menor = float('inf')
 
-        for node in self.nodes:            
-            if node.key < self.menor and node.done != True:
+        for node in self.nodes:
+            
+            if node.key < self.menor and node.done == False:                
                 self.menor = node.key
-                self.indiceMenor = self.index(node.label)                
-        
+                self.indiceMenor = self.index(node.label)
+                
         return self.indiceMenor
 
     def kruskal(self):
@@ -593,50 +605,54 @@ class Graph():  # classe para o grafo e seus métodos
     def bellmanFord(self, s):
         # https://www.youtube.com/watch?v=vEztwiTELWs
 
-        # resetando os valores dos atributos dos nodos
-        self.nodeResetter() 
-        
-        # atribui distância zero ao primeiro termo do grafo
-        s = self.index(s)
-        self.nodes[s].distance = 0
+        if self.directed:
+            # resetando os valores dos atributos dos nodos
+            self.nodeResetter() 
+            
+            # atribui distância zero ao primeiro termo do grafo
+            s = self.index(s)
+            self.nodes[s].distance = 0
 
-        # conta as repetições de relaxamento de nodos
-        for i in range(len(self.nodes) - 1):
+            # conta as repetições de relaxamento de nodos
+            for i in range(len(self.nodes) - 1):
 
-            # percorre nodos
+                # percorre nodos
+                for j in range(len(self.nodes)):
+
+                    # percorre arestas           
+                    for edge in self.nodes[j].edgesComplete:  
+
+                        # pegamos o índice da aresta ligada ao nodo
+                        edgeIndex = self.index(edge[1])
+
+                        # RELAXA
+                        # se a distância entre o nodo e seu vizinho é menor que a atual
+                        # guarda a nova dsitância e altera pai
+                        if self.nodes[edgeIndex].distance > self.nodes[j].distance + int(edge[2]):
+                            self.nodes[edgeIndex].parent = self.nodes[j].label
+                            self.nodes[edgeIndex].distance = self.nodes[j].distance + int(edge[2])
+
+            # repete-se o processo para averiguar se há ciclos negativos
+            # o que causaria sempre novos. Retorna False se há
             for j in range(len(self.nodes)):
-
-                # percorre arestas           
                 for edge in self.nodes[j].edgesComplete:  
-
-                    # pegamos o índice da aresta ligada ao nodo
                     edgeIndex = self.index(edge[1])
-
-                    # RELAXA
-                    # se a distância entre o nodo e seu vizinho é menor que a atual
-                    # guarda a nova dsitância e altera pai
                     if self.nodes[edgeIndex].distance > self.nodes[j].distance + int(edge[2]):
-                        self.nodes[edgeIndex].parent = self.nodes[j].label
-                        self.nodes[edgeIndex].distance = self.nodes[j].distance + int(edge[2])
+                        print('\nERRO! O grafo não pode possuir ciclo negativo.\n')
+                        return False
 
-        # repete-se o processo para averiguar se há ciclos negativos
-        # o que causaria sempre novos. Retorna False se há
-        for j in range(len(self.nodes)):
-            for edge in self.nodes[j].edgesComplete:  
-                edgeIndex = self.index(edge[1])
-                if self.nodes[edgeIndex].distance > self.nodes[j].distance + int(edge[2]):
-                    print('\nERRO! O grafo não pode possuir ciclo negativo.\n')
-                    return False
+            # se não há ciclo negativo imprimi-se os parâmetros
+            print()    
+            for i in range(len(self.nodes)):
+                print(f'Nodo = {self.nodes[i].label}')
+                print(f'Pai = {self.nodes[i].parent}')
+                print(f'Distância = {self.nodes[i].distance}')
+                print()  
 
-        # se não há ciclo negativo imprimi-se os parâmetros
-        print()    
-        for i in range(len(self.nodes)):
-            print(f'Nodo = {self.nodes[i].label}')
-            print(f'Pai = {self.nodes[i].parent}')
-            print(f'Distância = {self.nodes[i].distance}')
-            print()  
-
-        return True
+            return True
+        else:
+            print('\nERRO! O grafo precisa ser orientado.\n')
+            return False
 
     # auxilia a resetar atributos dos nodos do grafo
     def nodeResetter(self):
@@ -650,9 +666,3 @@ class Graph():  # classe para o grafo e seus métodos
 
     # retorna índice (da lista self.grafos) de algum nodo
     def index(self, label):
-        for i in range(len(self.nodes)):
-            if self.nodes[i].label == str(label):
-                return i
-        
-        # caso não encontre o elemento procurado
-        return -1
