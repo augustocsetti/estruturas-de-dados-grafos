@@ -584,10 +584,10 @@ class Graph():  # classe para o grafo e seus métodos
         # se não há ciclo negativo imprimi-se os parâmetros
         print()    
         for i in range(len(self.nodes)):
-            print(f'Label: {self.nodes[i].label}')
-            print(f'Parent: {self.nodes[i].parent}')
-            print(f'Distance: {self.nodes[i].distance}')
-            print()    
+            print(f'Nodo = {self.nodes[i].label}')
+            print(f'Pai = {self.nodes[i].parent}')
+            print(f'Distância = {self.nodes[i].distance}')
+            print()  
 
         return True
 

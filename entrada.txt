@@ -4,7 +4,7 @@ s y 7
 t x 5
 t z -4
 t y 8
-x t -6
+x t -2
 y x -3
 y z 9
 z s 2
