@@ -552,11 +552,54 @@ class Graph():  # classe para o grafo e seus métodos
                 print()
         else:
             print('\nERRO! O grafo precisa ser orientado.\n')
-       
-    def bellmanFord(self):
+
+    def bellmanFord(self, s):
+        # https://www.youtube.com/watch?v=vEztwiTELWs
+
         # resetando os valores dos atributos dos nodos
         self.nodeResetter() 
-        print('\nYou wish...\n')
+        
+        # atribui distância zero ao primeiro termo do grafo
+        s = self.index(s)
+        self.nodes[s].distance = 0
+
+        # conta as repetições de relaxamento de nodos
+        for i in range(len(self.nodes) - 1):
+
+            # percorre nodos
+            for j in range(len(self.nodes)):
+
+                # percorre arestas           
+                for edge in self.nodes[j].edgesComplete:  
+
+                    # pegamos o índice da aresta ligada ao nodo
+                    edgeIndex = self.index(edge[1])
+
+                    # RELAXA
+                    # se a distância entre o nodo e seu vizinho é menor que a atual
+                    # guarda a nova dsitância e altera pai
+                    if self.nodes[edgeIndex].distance > self.nodes[j].distance + int(edge[2]):
+                        self.nodes[edgeIndex].parent = self.nodes[j].label
+                        self.nodes[edgeIndex].distance = self.nodes[j].distance + int(edge[2])
+
+        # repete-se o processo para averiguar se há ciclos negativos
+        # o que causaria sempre novos. Retorna False se há
+        for j in range(len(self.nodes)):
+            for edge in self.nodes[j].edgesComplete:  
+                edgeIndex = self.index(edge[1])
+                if self.nodes[edgeIndex].distance > self.nodes[j].distance + int(edge[2]):
+                    print('\nERRO! O grafo não pode possuir ciclo negativo.\n')
+                    return False
+
+        # se não há ciclo negativo imprimi-se os parâmetros
+        print()    
+        for i in range(len(self.nodes)):
+            print(f'Nodo = {self.nodes[i].label}')
+            print(f'Pai = {self.nodes[i].parent}')
+            print(f'Distância = {self.nodes[i].distance}')
+            print()  
+
+        return True
 
     # método auxiliar para resetar atributos dos nodos do grafo
     def nodeResetter(self):
@@ -564,7 +607,7 @@ class Graph():  # classe para o grafo e seus métodos
             self.nodes[i].parent = None
             self.nodes[i].key = float('inf')
             self.nodes[i].done = False
-            self.nodes[i].distance = float('inf')
+            self.nodes[i].distance = float('inf')     
 
     # retorna índice (da lista self.grafos) de algum nodo
     def index(self, label):
