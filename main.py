@@ -8,7 +8,6 @@ QUESTÕES EM ABERTO
 
 - Acertar buscas com edgesD edgesND;
 - Criar classes específicas para buscas e caminhos;
-- Melhorar mostra informações com busca por profundidade e largura;
 
 - Aconteceu um erro quando estava testando várias maneiras de busca por largura
 uma erro de char~int com uma lista. Testar!
