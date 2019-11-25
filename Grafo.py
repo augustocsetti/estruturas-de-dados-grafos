@@ -384,6 +384,7 @@ class Graph():  # classe para o grafo e seus métodos
         # inicializa set de todos elementos
         for elem in self.nodes:
             elem.set = WHITE
+            elem.time = []
         
         # tempo de abertura e fechamento
         self.time = 0
@@ -506,18 +507,18 @@ class Graph():  # classe para o grafo e seus métodos
             print(total)
             print()
 
-
     # método auxiliar para Prim
     def extractMin(self):
 
         self.indiceMenor = -1
         self.menor = float('inf')
 
-        for node in self.nodes:            
-            if node.key < self.menor and node.done != True:
+        for node in self.nodes:
+            
+            if node.key < self.menor and node.done == False:                
                 self.menor = node.key
-                self.indiceMenor = self.index(node.label)                
-        
+                self.indiceMenor = self.index(node.label)
+                
         return self.indiceMenor
 
     def kruskal(self):
@@ -679,6 +680,7 @@ class Graph():  # classe para o grafo e seus métodos
                 print()  
 
             return True
+          
         else:
             print('\nERRO! O grafo precisa ser orientado.\n')
             return False
