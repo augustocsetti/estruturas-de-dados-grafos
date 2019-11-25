@@ -320,7 +320,6 @@ class Graph():  # classe para o grafo e seus métodos
 
     #==== BUSCA ====#
 
-    #ATENÇÃO! CASO COM ERRO
     # algoritmo de busca em largura BFS
     def breadthSearch(self, s):
         # 's' é o label do nodo inicial
@@ -352,14 +351,23 @@ class Graph():  # classe para o grafo e seus métodos
             self.nodes[u].time = time
             time += 1
 
-            # percorre arestas do nodo u e checa se já foram setadas
-            # se não seta e adiciona a fila
-            for i in range (len(self.nodes[u].edgesD)):
-                indexTemp = self.index(self.nodes[u].edgesD[i])
-                if self.nodes[indexTemp].set == False:
-                    self.nodes[indexTemp].set = True
-                    self.nodes[indexTemp].father = self.nodes[u].label
-                    line.append(indexTemp)
+            # funciona para orientado ou não orientado
+            if self.directed:
+                # percorre arestas do nodo u e checa se já foram setadas
+                # se não seta e adiciona a fila
+                for i in range (len(self.nodes[u].edgesD)):
+                    indexTemp = self.index(self.nodes[u].edgesD[i])
+                    if self.nodes[indexTemp].set == False:
+                        self.nodes[indexTemp].set = True
+                        self.nodes[indexTemp].father = self.nodes[u].label
+                        line.append(indexTemp)
+            else:
+                for i in range (len(self.nodes[u].edgesND)):
+                    indexTemp = self.index(self.nodes[u].edgesND[i])
+                    if self.nodes[indexTemp].set == False:
+                        self.nodes[indexTemp].set = True
+                        self.nodes[indexTemp].father = self.nodes[u].label
+                        line.append(indexTemp)
 
         # printa informações de cada nodo pós busca por profundidade
         for elem in self.nodes:
@@ -408,14 +416,24 @@ class Graph():  # classe para o grafo e seus métodos
         self.time += 1
         self.nodes[u].time.append(self.time)
 
-        # busca nodos vizinhos
-        for i in range(len(self.nodes[u].edgesD)):
-            indexTemp = self.index(self.nodes[u].edgesD[i])
-            # se não tiver sido 'aberto' (nodo branco) acessa e chama recursão
-            if self.nodes[indexTemp].set == WHITE:
-                # define pai do nodo encontrado
-                self.nodes[indexTemp].father = self.nodes[u].label
-                self.depthSearchVisit(indexTemp)
+        # funciona para orientado ou não
+        if self.directed:
+            # busca nodos vizinhos
+            for i in range(len(self.nodes[u].edgesD)):
+                indexTemp = self.index(self.nodes[u].edgesD[i])
+                # se não tiver sido 'aberto' (nodo branco) acessa e chama recursão
+                if self.nodes[indexTemp].set == WHITE:
+                    # define pai do nodo encontrado
+                    self.nodes[indexTemp].father = self.nodes[u].label
+                    self.depthSearchVisit(indexTemp)
+
+        else:
+            for i in range(len(self.nodes[u].edgesND)):
+                indexTemp = self.index(self.nodes[u].edgesND[i])
+                if self.nodes[indexTemp].set == WHITE:
+                    self.nodes[indexTemp].father = self.nodes[u].label
+                    self.depthSearchVisit(indexTemp)
+
 
         # fecha nodo (seta cor preto) e adiciona tempo de saída
         self.nodes[u].set = BLACK
