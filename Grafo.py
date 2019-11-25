@@ -616,50 +616,54 @@ class Graph():  # classe para o grafo e seus métodos
     def bellmanFord(self, s):
         # https://www.youtube.com/watch?v=vEztwiTELWs
 
-        # resetando os valores dos atributos dos nodos
-        self.nodeResetter() 
-        
-        # atribui distância zero ao primeiro termo do grafo
-        s = self.index(s)
-        self.nodes[s].distance = 0
+        if self.directed:
+            # resetando os valores dos atributos dos nodos
+            self.nodeResetter() 
+            
+            # atribui distância zero ao primeiro termo do grafo
+            s = self.index(s)
+            self.nodes[s].distance = 0
 
-        # conta as repetições de relaxamento de nodos
-        for i in range(len(self.nodes) - 1):
+            # conta as repetições de relaxamento de nodos
+            for i in range(len(self.nodes) - 1):
 
-            # percorre nodos
+                # percorre nodos
+                for j in range(len(self.nodes)):
+
+                    # percorre arestas           
+                    for edge in self.nodes[j].edgesComplete:  
+
+                        # pegamos o índice da aresta ligada ao nodo
+                        edgeIndex = self.index(edge[1])
+
+                        # RELAXA
+                        # se a distância entre o nodo e seu vizinho é menor que a atual
+                        # guarda a nova dsitância e altera pai
+                        if self.nodes[edgeIndex].distance > self.nodes[j].distance + int(edge[2]):
+                            self.nodes[edgeIndex].parent = self.nodes[j].label
+                            self.nodes[edgeIndex].distance = self.nodes[j].distance + int(edge[2])
+
+            # repete-se o processo para averiguar se há ciclos negativos
+            # o que causaria sempre novos. Retorna False se há
             for j in range(len(self.nodes)):
-
-                # percorre arestas           
                 for edge in self.nodes[j].edgesComplete:  
-
-                    # pegamos o índice da aresta ligada ao nodo
                     edgeIndex = self.index(edge[1])
-
-                    # RELAXA
-                    # se a distância entre o nodo e seu vizinho é menor que a atual
-                    # guarda a nova dsitância e altera pai
                     if self.nodes[edgeIndex].distance > self.nodes[j].distance + int(edge[2]):
-                        self.nodes[edgeIndex].parent = self.nodes[j].label
-                        self.nodes[edgeIndex].distance = self.nodes[j].distance + int(edge[2])
+                        print('\nERRO! O grafo não pode possuir ciclo negativo.\n')
+                        return False
 
-        # repete-se o processo para averiguar se há ciclos negativos
-        # o que causaria sempre novos. Retorna False se há
-        for j in range(len(self.nodes)):
-            for edge in self.nodes[j].edgesComplete:  
-                edgeIndex = self.index(edge[1])
-                if self.nodes[edgeIndex].distance > self.nodes[j].distance + int(edge[2]):
-                    print('\nERRO! O grafo não pode possuir ciclo negativo.\n')
-                    return False
+            # se não há ciclo negativo imprimi-se os parâmetros
+            print()    
+            for i in range(len(self.nodes)):
+                print(f'Nodo = {self.nodes[i].label}')
+                print(f'Pai = {self.nodes[i].parent}')
+                print(f'Distância = {self.nodes[i].distance}')
+                print()  
 
-        # se não há ciclo negativo imprimi-se os parâmetros
-        print()    
-        for i in range(len(self.nodes)):
-            print(f'Nodo = {self.nodes[i].label}')
-            print(f'Pai = {self.nodes[i].parent}')
-            print(f'Distância = {self.nodes[i].distance}')
-            print()  
-
-        return True
+            return True
+        else:
+            print('\nERRO! O grafo precisa ser orientado.\n')
+            return False
 
     # auxilia a resetar atributos dos nodos do grafo
     def nodeResetter(self):
