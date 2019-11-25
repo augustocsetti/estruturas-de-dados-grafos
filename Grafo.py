@@ -320,7 +320,6 @@ class Graph():  # classe para o grafo e seus métodos
 
     #==== BUSCA ====#
 
-    #ATENÇÃO! CASO COM ERRO
     # algoritmo de busca em largura BFS
     def breadthSearch(self, s):
         # 's' é o label do nodo inicial
@@ -681,6 +680,7 @@ class Graph():  # classe para o grafo e seus métodos
                 print()  
 
             return True
+          
         else:
             print('\nERRO! O grafo precisa ser orientado.\n')
             return False
@@ -697,3 +697,9 @@ class Graph():  # classe para o grafo e seus métodos
 
     # retorna índice (da lista self.grafos) de algum nodo
     def index(self, label):
+        for i in range(len(self.nodes)):
+            if self.nodes[i].label == str(label):
+                return i
+        
+        # caso não encontre o elemento procurado
+        return -1
