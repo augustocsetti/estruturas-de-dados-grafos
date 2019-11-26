@@ -93,7 +93,7 @@ def main():
             elif op == 11:
                 g.depthSearch()
             elif op == 12:                
-                g.prim()
+                g.prim2()
             elif op == 13:                
                 g.kruskal()
             elif op == 14:
