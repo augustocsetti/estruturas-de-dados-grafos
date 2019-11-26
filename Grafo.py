@@ -38,7 +38,7 @@ class Graph():  # classe para o grafo e seus métodos
             for edgeW in edgesW:
                 if edgeW[0] == node:
                     tempWPrim.append([edgeW[1], edgeW[2]])
-                    tempComplete.append([edgeW[0], edgeW[1], edgeW[2]])
+                    tempComplete.append([edgeW[0], edgeW[1], int(edgeW[2])])
                 if edgeW[1] == node:
                     tempWPrim.append([edgeW[0], edgeW[2]])
 
@@ -99,7 +99,6 @@ class Graph():  # classe para o grafo e seus métodos
         # procura pelos índices dos nodos
         self.exitNodeIndex = self.index(edge[0])
         self.entryNodeIndex = self.index(edge[1])
-        self.edgeWeight = edge[2]
         
         # se um deles não existir mostra mensagem de erro
         # -1 é o retorno da função que indica que o nodo em questão não foi encontrado
@@ -116,11 +115,11 @@ class Graph():  # classe para o grafo e seus métodos
                 self.nodes[self.entryNodeIndex].edgesND.append(edge[0])
 
                 # grafo orientado - completo [nodo1] [nodo2] [peso]
-                self.nodes[self.exitNodeIndex].edgesComplete.append(edge)
+                self.nodes[self.exitNodeIndex].edgesComplete.append( [ edge[0], edge[1], int(edge[2]) ] )
 
                 # grafo não orientado - [nodo2] [peso]
-                self.nodes[self.exitNodeIndex].edgesWH.append([edge[1], edge[2]])
-                self.nodes[self.entryNodeIndex].edgesWH.append([edge[0], edge[2]])
+                self.nodes[self.exitNodeIndex].edgesWH.append([edge[1], int(edge[2])])
+                self.nodes[self.entryNodeIndex].edgesWH.append([edge[0], int(edge[2])])
 
                 
                 print('\nOperação bem sucedida.\n')
@@ -525,7 +524,7 @@ class Graph():  # classe para o grafo e seus métodos
             print('\nERRO! O grafo precisa ser não orientado.\n')
             return
         else:
-            # veriricando se o grafo possui arestas com pesos negativos
+            # verificando se o grafo possui arestas com pesos negativos
             # este algoritmo não funciona caso elas existam
             for i in range(len(self.nodes)):
                 for edge in self.nodes[i].edgesComplete:
@@ -550,18 +549,15 @@ class Graph():  # classe para o grafo e seus métodos
 
             # percorremos as arestas ordenadas e utilizamos o índice do primeiro elemento
             for edge in self.ordenadas:
-                self.indice = self.index(edge[0])
                 
-                # percorrendo todas as arestas no índice encontrado
-                for edgesK in self.nodes[self.indice].edgesComplete:
+                # pegamos o índice do nodo de destino
+                edgeIndex = self.index(edge[1])
 
-                    # agora pegamos o índice no segundo elemento da aresta para verificar se ele já tem pai
-                    # caso não tenha ela será definido - isto evita que o grafo fique um ciclo
-                    edgeIndex = self.index(edgesK[1])
-                
-                    if self.nodes[edgeIndex].parent == None:
-                        self.nodes[edgeIndex].parent = edgesK[0]
-                        self.minimum.append(edgesK)
+                # caso ele não tenha pai é porque ainda não existe ligação com ele
+                # e como já estão ordenadas, não precisamos de verificações adicionais
+                if self.nodes[edgeIndex].parent == None:
+                    self.nodes[edgeIndex].parent = edge[0]
+                    self.minimum.append(edge)
 
             print(self.minimum)
         
@@ -581,7 +577,7 @@ class Graph():  # classe para o grafo e seus métodos
             # resetando os valores dos atributos dos nodos
             self.nodeResetter()
 
-            # indíce no nodo inicial - distância = zero
+            # índice no nodo inicial - distância = zero
             self.indice = 0
             self.nodes[self.indice].distance = 0
             self.nodes[self.indice].done = True

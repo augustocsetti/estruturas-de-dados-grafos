@@ -19,7 +19,7 @@ Os métodos implementados para interagir com o grafo estão em Grafo.py
 from Grafo import *                
               
 def readFile(): # função para receber entrada do arquivo
-    with open('entrada.txt') as file:
+    with open('entrada2.txt') as file:
         lines = [line.rstrip() for line in file]
     for i in range(len(lines)):
         lines[i] = lines[i].split(" ")   
