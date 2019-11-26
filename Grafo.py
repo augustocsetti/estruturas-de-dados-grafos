@@ -326,15 +326,14 @@ class Graph():  # classe para o grafo e seus métodos
         # bibliografia https://www.youtube.com/watch?v=cUlDbC0KrQo
 
         # inicializa set de todos elementos
-        for elem in self.nodes:
-            elem.set = False
+        self.nodeResetter()
         
         line = []
 
         # índice de s
         indexS = self.index(s)
         # marca nodo
-        self.nodes[indexS].set = True
+        self.nodes[indexS].done = True
         # add a fila
         line.append(indexS)
 
@@ -357,52 +356,50 @@ class Graph():  # classe para o grafo e seus métodos
                 # se não seta e adiciona a fila
                 for i in range (len(self.nodes[u].edgesD)):
                     indexTemp = self.index(self.nodes[u].edgesD[i])
-                    if self.nodes[indexTemp].set == False:
-                        self.nodes[indexTemp].set = True
-                        self.nodes[indexTemp].father = self.nodes[u].label
+                    if self.nodes[indexTemp].done == False:
+                        self.nodes[indexTemp].done = True
+                        self.nodes[indexTemp].parent = self.nodes[u].label
                         line.append(indexTemp)
             else:
                 for i in range (len(self.nodes[u].edgesND)):
                     indexTemp = self.index(self.nodes[u].edgesND[i])
-                    if self.nodes[indexTemp].set == False:
-                        self.nodes[indexTemp].set = True
-                        self.nodes[indexTemp].father = self.nodes[u].label
+                    if self.nodes[indexTemp].done == False:
+                        self.nodes[indexTemp].done = True
+                        self.nodes[indexTemp].parent = self.nodes[u].label
                         line.append(indexTemp)
 
         # printa informações de cada nodo pós busca por profundidade
         for elem in self.nodes:
             print()
             print(f'Nodo: {elem.label}')
-            print(f'Pai: {elem.father}')
+            print(f'Pai: {elem.parent}')
             print(f'Tempo: {elem.time}')
-            print(f'Set: {elem.set}')
+            print(f'Set: {elem.done}')
 
     # algoritmo de busca em largura DFS-1
     def depthSearch(self):
         # bibliografia https://www.youtube.com/watch?v=0B6VfRbppkE
 
         # inicializa set de todos elementos
-        for elem in self.nodes:
-            elem.set = WHITE
-            elem.time = []
+        self.nodeResetter()
         
         # tempo de abertura e fechamento
         self.time = 0
         # percorre todos os nodos
         for i in range(len(self.nodes)):
-            if self.nodes[i].set == WHITE:
+            if self.nodes[i].done == WHITE:
                 self.depthSearchVisit(i)
 
         # printa informações de cada nodo pós busca por profundidade
         print()
         for elem in self.nodes:
             print(f'Nodo: {elem.label}')
-            print(f'Pai: {elem.father}')
+            print(f'Pai: {elem.parent}')
             print(f'Tempo (Abertura): {elem.time[0]}')
             print(f'Tempo (Fechamento): {elem.time[1]}')
-            if elem.set == 0:
+            if elem.done == 0:
                 print(f'Cor: White')
-            elif elem.set == 1:
+            elif elem.done == 1:
                 print(f'Cor: Gray')
             else:
                 print(f'Cor: Black')
@@ -411,7 +408,7 @@ class Graph():  # classe para o grafo e seus métodos
     # algoritmo de busca em largura DFS-2
     def depthSearchVisit(self, u):
         # marca primeira passagem sobre o nodo (cinza)
-        self.nodes[u].set = GRAY
+        self.nodes[u].done = GRAY
 
         # incrementa e adiciona tempo de entrada do nodo
         self.time += 1
@@ -423,21 +420,21 @@ class Graph():  # classe para o grafo e seus métodos
             for i in range(len(self.nodes[u].edgesD)):
                 indexTemp = self.index(self.nodes[u].edgesD[i])
                 # se não tiver sido 'aberto' (nodo branco) acessa e chama recursão
-                if self.nodes[indexTemp].set == WHITE:
+                if self.nodes[indexTemp].done == WHITE:
                     # define pai do nodo encontrado
-                    self.nodes[indexTemp].father = self.nodes[u].label
+                    self.nodes[indexTemp].parent = self.nodes[u].label
                     self.depthSearchVisit(indexTemp)
 
         else:
             for i in range(len(self.nodes[u].edgesND)):
                 indexTemp = self.index(self.nodes[u].edgesND[i])
-                if self.nodes[indexTemp].set == WHITE:
-                    self.nodes[indexTemp].father = self.nodes[u].label
+                if self.nodes[indexTemp].done == WHITE:
+                    self.nodes[indexTemp].parent = self.nodes[u].label
                     self.depthSearchVisit(indexTemp)
 
 
         # fecha nodo (seta cor preto) e adiciona tempo de saída
-        self.nodes[u].set = BLACK
+        self.nodes[u].done = BLACK
         self.time += 1
         self.nodes[u].time.append(self.time)
 
@@ -683,17 +680,22 @@ class Graph():  # classe para o grafo e seus métodos
           
         else:
             print('\nERRO! O grafo precisa ser orientado.\n')
-            return False
+            return False   
 
-    # auxilia a resetar atributos dos nodos do grafo
+    #==== AUXILIAR ====#
+
+    # reseta atributos usados na busca dos nodos do grafo
     def nodeResetter(self):
         for i in range(len(self.nodes)):
             self.nodes[i].parent = None
             self.nodes[i].key = float('inf')
             self.nodes[i].done = False
-            self.nodes[i].distance = float('inf')     
-
-    #==== AUXILIAR ====#
+            self.nodes[i].distance = float('inf')
+            try:
+                while len(self.nodes[i].time) != 0:
+                    self.nodes[i].time.pop()
+            except:
+                self.nodes[i].time = []
 
     # retorna índice (da lista self.grafos) de algum nodo
     def index(self, label):
