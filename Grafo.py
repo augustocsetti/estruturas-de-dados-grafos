@@ -37,10 +37,10 @@ class Graph():  # classe para o grafo e seus métodos
             # Prim, Kruskal, Dijkstra, Bellman-Ford
             for edgeW in edgesW:
                 if edgeW[0] == node:
-                    tempWPrim.append([edgeW[1], edgeW[2]])
-                    tempComplete.append([edgeW[0], edgeW[1], edgeW[2]])
+                    tempWPrim.append([edgeW[1], int(edgeW[2])])
+                    tempComplete.append([edgeW[0], edgeW[1], int(edgeW[2])])
                 if edgeW[1] == node:
-                    tempWPrim.append([edgeW[0], edgeW[2]])
+                    tempWPrim.append([edgeW[0], int(edgeW[2])])
 
             # cria nodo e adiciona a lista de nodos
             self.nodes.append(Node(node, tempD, tempND, tempWPrim, tempComplete))
@@ -99,7 +99,6 @@ class Graph():  # classe para o grafo e seus métodos
         # procura pelos índices dos nodos
         self.exitNodeIndex = self.index(edge[0])
         self.entryNodeIndex = self.index(edge[1])
-        self.edgeWeight = edge[2]
         
         # se um deles não existir mostra mensagem de erro
         # -1 é o retorno da função que indica que o nodo em questão não foi encontrado
@@ -116,11 +115,11 @@ class Graph():  # classe para o grafo e seus métodos
                 self.nodes[self.entryNodeIndex].edgesND.append(edge[0])
 
                 # grafo orientado - completo [nodo1] [nodo2] [peso]
-                self.nodes[self.exitNodeIndex].edgesComplete.append(edge)
+                self.nodes[self.exitNodeIndex].edgesComplete.append( [ edge[0], edge[1], int(edge[2]) ] )
 
                 # grafo não orientado - [nodo2] [peso]
-                self.nodes[self.exitNodeIndex].edgesWH.append([edge[1], edge[2]])
-                self.nodes[self.entryNodeIndex].edgesWH.append([edge[0], edge[2]])
+                self.nodes[self.exitNodeIndex].edgesWH.append([edge[1], int(edge[2])])
+                self.nodes[self.entryNodeIndex].edgesWH.append([edge[0], int(edge[2])])
 
                 
                 print('\nOperação bem sucedida.\n')
@@ -466,6 +465,10 @@ class Graph():  # classe para o grafo e seus métodos
             # lista auxiliar para garantir que não haverá desconexão entre os nodos
             self.minPath = []
             self.size = len(self.nodes)
+            
+            temp = self.nodes.copy()
+            for t in temp:
+                print(t.label)
                     
             while self.size > 0:
                 self.size -= 1
@@ -525,7 +528,7 @@ class Graph():  # classe para o grafo e seus métodos
             print('\nERRO! O grafo precisa ser não orientado.\n')
             return
         else:
-            # veriricando se o grafo possui arestas com pesos negativos
+            # verificando se o grafo possui arestas com pesos negativos
             # este algoritmo não funciona caso elas existam
             for i in range(len(self.nodes)):
                 for edge in self.nodes[i].edgesComplete:
@@ -534,36 +537,60 @@ class Graph():  # classe para o grafo e seus métodos
                         return
                         
             # resetando os valores dos atributos dos nodos
-            self.nodeResetter() 
+            self.nodeResetter()
 
             # listas auxiliares para guardar as listas em ordem de peso e o resultado final, respectivamente
             self.ordenadas = []
             self.minimum = []
+            total = 0
 
             # guardamos todas as arestas
             for i in range(len(self.nodes)):
                 for edge in self.nodes[i].edgesComplete:
                     self.ordenadas.append(edge)
 
-            # e as ordenamos por peso
+            # e as ordenamos por peso            
             self.ordenadas = sorted(self.ordenadas, key=itemgetter(2))
+            print(self.ordenadas)
 
-            # percorremos as arestas ordenadas e utilizamos o índice do primeiro elemento
-            for edge in self.ordenadas:
-                self.indice = self.index(edge[0])
-                
-                # percorrendo todas as arestas no índice encontrado
-                for edgesK in self.nodes[self.indice].edgesComplete:
+            
+            n = 0
 
-                    # agora pegamos o índice no segundo elemento da aresta para verificar se ele já tem pai
-                    # caso não tenha ela será definido - isto evita que o grafo fique um ciclo
-                    edgeIndex = self.index(edgesK[1])
-                
-                    if self.nodes[edgeIndex].parent == None:
-                        self.nodes[edgeIndex].parent = edgesK[0]
-                        self.minimum.append(edgesK)
+            # percorremos as arestas ordenadas
+            for edges in self.ordenadas:                          
+                    
+                # pegamos o índice do nodo de destino
+                exitIndex = self.index(edges[0])
+                entryIndex = self.index(edges[1])
+               
+                # caso ele não tenha pai é porque ainda não existe ligação com ele
+                # e como já estão ordenadas, não precisamos de verificações adicionais
+                if self.nodes[exitIndex].label not in self.nodes[entryIndex].connectedTo and self.nodes[entryIndex].label not in self.nodes[exitIndex].connectedTo:
+                    self.nodes[entryIndex].connectedTo.append(self.nodes[exitIndex].label)
+                    self.nodes[exitIndex].connectedTo.append(self.nodes[entryIndex].label)
+
+                 
+                    # evita que ciclos sejam formados - os nodos 
+                    for label in self.nodes[exitIndex].connectedTo:
+                        if label not in self.nodes[entryIndex].connectedTo:
+                            self.nodes[entryIndex].connectedTo.append(label)
+                    for label in self.nodes[entryIndex].connectedTo:
+                        if label not in self.nodes[exitIndex].connectedTo:
+                            self.nodes[exitIndex].connectedTo.append(label)
+
+                    self.nodes[entryIndex].parent = edges[0]
+                    self.minimum.append(edges)
+                    total += edges[2]
+
+                # número total de arestas = nodos - 1
+                if n == len(self.nodes):
+                    break
+                else:
+                    n += 1
 
             print(self.minimum)
+        
+            print(total)
         
     def dijkstra(self):
         # https://www.youtube.com/watch?v=ovkITlgyJ2s&t=0s
@@ -581,7 +608,7 @@ class Graph():  # classe para o grafo e seus métodos
             # resetando os valores dos atributos dos nodos
             self.nodeResetter()
 
-            # indíce no nodo inicial - distância = zero
+            # índice no nodo inicial - distância = zero
             self.indice = 0
             self.nodes[self.indice].distance = 0
             self.nodes[self.indice].done = True
@@ -690,6 +717,7 @@ class Graph():  # classe para o grafo e seus métodos
             self.nodes[i].key = float('inf')
             self.nodes[i].done = False
             self.nodes[i].distance = float('inf')
+            self.nodes[i].connectedTo = []
             try:
                 while len(self.nodes[i].time) != 0:
                     self.nodes[i].time.pop()
@@ -704,3 +732,78 @@ class Graph():  # classe para o grafo e seus métodos
         
         # caso não encontre o elemento procurado
         return -1
+
+
+    # algoritmo que procura o menor caminho entre os nodos de um grafo
+    def prim2(self):
+        if self.directed:
+            print('\nERRO! O grafo precisa ser não orientado.\n')
+            return
+        else:
+            # veriricando se o grafo possui arestas com pesos negativos
+            # este algoritmo não funciona caso elas existam
+            for i in range(len(self.nodes)):
+                for edge in self.nodes[i].edgesComplete:
+                    if int(edge[2]) < 0:
+                        print('\nERRO! O grafo não pode possuir arestas com peso negativo.\n')
+                        return
+
+            # resetando os valores dos atributos dos nodos
+            self.nodeResetter()              
+            
+            # a chave do nodo de partida é sempre 0
+            self.nodes[0].key = 0     
+            
+            # variável utilizada para evitar que a função de busca sempre ache a mesma key mínima
+            # passo ela por parâmetro para a função extractMin
+            tmp = []
+                    
+            while len(tmp) < len(self.nodes):        
+                minimo = self.extractMin2(tmp)
+                if minimo == -1:
+                    break
+                
+                # percorrento as arestas([nodo2] [peso]) do nodo de índice mínimo
+                for edgeW in self.nodes[minimo].edgesWH:
+                    print(edgeW)
+                    
+                    # pegando o índice do nodo2
+                    edgeIndex = self.index(edgeW[0])
+
+                    # caso o valor da chave seja menor ao peso da ligação, configuramos o valor da chabe e o pai do nodo
+                    # tive que adicionar uma verificação entre os nodos para evitar que nodos ficassem pai e filho entre si
+                    # isto ocorria quanto a aresta entre eles era menor do que a chave e desconectaga o grafo
+                    if self.nodes[edgeIndex].key > edgeW[1] and self.nodes[minimo].parent != self.nodes[edgeIndex].label:
+                        self.nodes[edgeIndex].key = edgeW[1]
+                        self.nodes[edgeIndex].parent = self.nodes[minimo].label
+
+                
+                # adiciono a label do nodo para garantir que não vamos procurar pelo mínimo dele novamente
+                tmp.append(self.nodes[minimo].label)                        
+                
+            
+            total = 0
+            # mostra o nodo, seu pai e o peso da ligação até este
+            for i in range(len(self.nodes)):
+                print(f'Nodo = {self.nodes[i].label}')
+                print(f'Pai = {self.nodes[i].parent}')
+                print(f'Chave = {self.nodes[i].key}')
+                total += self.nodes[i].key
+                print()
+            
+            #print(self.minPath)
+            print(total)
+            print()
+
+    # método auxiliar para Prim
+    def extractMin2(self, tmp):
+
+        self.menor = float('inf')
+        self.ind = -1    
+
+        for node in self.nodes:       
+            if node.key < self.menor and node.label not in tmp:                
+                self.menor = node.key
+                self.ind = self.index(node.label)
+
+        return self.ind

@@ -16,6 +16,7 @@ class Node():  # classe para os nodos e suas características
         self.parent = None # marcação do nodo pai na busca por profundidade
         self.key = float('inf')
         self.done = False # usado para marcar nodo em buscas
+        self.connectedTo = []
 
         # Dijkstra / Bellman-Ford
         self.distance = float('inf')

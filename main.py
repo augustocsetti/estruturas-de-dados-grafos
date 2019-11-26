@@ -19,7 +19,7 @@ Os métodos implementados para interagir com o grafo estão em Grafo.py
 from Grafo import *                
               
 def readFile(): # função para receber entrada do arquivo
-    with open('entrada.txt') as file:
+    with open('entrada2.txt') as file:
         lines = [line.rstrip() for line in file]
     for i in range(len(lines)):
         lines[i] = lines[i].split(" ")   
@@ -93,7 +93,7 @@ def main():
             elif op == 11:
                 g.depthSearch()
             elif op == 12:                
-                g.prim()
+                g.prim2()
             elif op == 13:                
                 g.kruskal()
             elif op == 14:
